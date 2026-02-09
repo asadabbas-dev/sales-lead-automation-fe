@@ -76,6 +76,10 @@ const themeColors = {
 
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  safelist: [
+    { pattern: /(from|to)-(indigo|violet|cyan|emerald|purple|pink|rose|orange|teal|blue)-500\/20/ },
+    { pattern: /text-(emerald|cyan|violet)-400/ },
+  ],
 
   darkMode: "class",
 
@@ -90,6 +94,7 @@ module.exports = {
 
     fontFamily: {
       sans: ["Inter", "system-ui", "sans-serif"],
+      display: ["Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"],
       mono: ["JetBrains Mono", "Fira Code", "monospace"],
     },
 
@@ -121,6 +126,12 @@ module.exports = {
           tertiary: "#6B7280",
           inverse: "#FFFFFF",
         },
+
+        dark: {
+          base: "#0B0E14",
+          surface: "#0F172A",
+          deep: "#020617",
+        },
       },
 
       spacing: {
@@ -139,6 +150,21 @@ module.exports = {
         xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
         card: "0 4px 6px -1px rgba(99, 102, 241, 0.1), 0 2px 4px -1px rgba(99, 102, 241, 0.06)",
         modal: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+        glow: "0 0 40px -10px rgba(99, 102, 241, 0.4)",
+        "glow-lg": "0 0 60px -15px rgba(99, 102, 241, 0.5)",
+        float: "0 24px 48px -12px rgba(0, 0, 0, 0.12)",
+        "float-lg": "0 32px 64px -16px rgba(0, 0, 0, 0.16)",
+      },
+
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-mesh": "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+        "gradient-accent": "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%)",
+        "gradient-hero": "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent), radial-gradient(ellipse 60% 40% at 100% 0%, rgba(139, 92, 246, 0.1), transparent), radial-gradient(ellipse 60% 40% at 0% 0%, rgba(6, 182, 212, 0.08), transparent)",
+        "gradient-dark": "linear-gradient(180deg, #0B0E14 0%, #0F172A 50%, #020617 100%)",
+        "gradient-accent-indigo-cyan": "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+        "gradient-accent-purple-pink": "linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)",
+        "gradient-accent-emerald-teal": "linear-gradient(135deg, #10b981 0%, #14b8a6 100%)",
       },
 
       animation: {
@@ -169,6 +195,18 @@ module.exports = {
 
       transitionTimingFunction: {
         "bounce-in": "cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+      },
+
+      // Landing page typography scale (production-ready)
+      fontSize: {
+        "landing-hero": ["2.25rem", { lineHeight: "1.15", letterSpacing: "-0.02em" }],
+        "landing-hero-lg": ["3rem", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        "landing-hero-xl": ["3.5rem", { lineHeight: "1.08", letterSpacing: "-0.02em" }],
+        "landing-section": ["1.25rem", { lineHeight: "1.3" }],
+        "landing-section-lg": ["1.5rem", { lineHeight: "1.25" }],
+        "landing-card": ["0.875rem", { lineHeight: "1.4" }],
+        "landing-body": ["0.875rem", { lineHeight: "1.6" }],
+        "landing-meta": ["0.75rem", { lineHeight: "1.4" }],
       },
     },
   },

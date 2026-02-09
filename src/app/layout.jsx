@@ -1,6 +1,7 @@
 "use client";
 
 import FullPageLoader from "@/common/components/full-page-loader/full-page-loader.component";
+import { LenisProvider } from "@/components/providers/LenisProvider";
 import "@/common/styles/dashboard/dashboard.style.css";
 import "@/common/styles/globals.style.css";
 import "@/common/styles/home.style.scss";
@@ -43,15 +44,14 @@ function LayoutWrapper({ children }) {
   }, [pathname]);
 
   return (
-    <>
+    <LenisProvider>
       {loading && <FullPageLoader />}
       <React.Fragment>
         {/* {!loading && <Header />} */}
-        <div className="bg-white">{children}</div>
-        {/* <div className="pt-52 lg:pt-40">{children}</div> */}
+        <div className={pathname === "/" ? "" : "bg-white"}>{children}</div>
         {/* {!loading && <Footer />} */}
       </React.Fragment>
-    </>
+    </LenisProvider>
   );
 }
 
@@ -64,7 +64,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <title>Next Js</title>
+        <title>Lead Ops | Automated Lead Qualification</title>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
