@@ -5,8 +5,8 @@ import { useFrame } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import * as THREE from "three";
 
-function FloatingOrb({ position, color, scale = 1 }: { position: [number, number, number]; color: string; scale?: number }) {
-  const ref = useRef<THREE.Mesh>(null);
+function FloatingOrb({ position, color, scale = 1 }) {
+  const ref = useRef(null);
 
   useFrame((state) => {
     if (!ref.current) return;
@@ -31,8 +31,8 @@ function FloatingOrb({ position, color, scale = 1 }: { position: [number, number
   );
 }
 
-function FloatingRing({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
-  const ref = useRef<THREE.Mesh>(null);
+function FloatingRing({ position, scale = 1 }) {
+  const ref = useRef(null);
 
   useFrame((state) => {
     if (!ref.current) return;
@@ -57,7 +57,7 @@ function FloatingRing({ position, scale = 1 }: { position: [number, number, numb
 function ParticleField() {
   const count = 200;
   const positions = new Float32Array(count * 3);
-  const ref = useRef<THREE.Points>(null);
+  const ref = useRef(null);
 
   for (let i = 0; i < count; i++) {
     positions[i * 3] = (Math.random() - 0.5) * 20;
@@ -92,8 +92,8 @@ function ParticleField() {
   );
 }
 
-export function HeroScene({ mouse }: { mouse: { x: number; y: number } }) {
-  const groupRef = useRef<THREE.Group>(null);
+export function HeroScene({ mouse }) {
+  const groupRef = useRef(null);
 
   useFrame((state) => {
     if (!groupRef.current) return;

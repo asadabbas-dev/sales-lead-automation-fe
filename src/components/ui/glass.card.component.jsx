@@ -2,13 +2,7 @@
 
 import { motion } from "framer-motion";
 
-type GlassCardProps = {
-  children: React.ReactNode;
-  className?: string;
-  hover?: boolean;
-};
-
-export function GlassCard({ children, className = "", hover = true }: GlassCardProps) {
+export function GlassCard({ children, className = "", hover = true }) {
   return (
     <motion.div
       whileHover={hover ? { y: -4, scale: 1.01 } : undefined}

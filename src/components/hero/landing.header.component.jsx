@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { MagneticButton } from "@/components/ui/MagneticButton";
+import { MagneticButton } from "@/components/ui/magnetic.button.component";
 
 const navLinks = [
   { label: "Features", href: "#features" },

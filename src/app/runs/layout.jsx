@@ -1,10 +1,6 @@
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { DashboardHeader } from "@/components/dashboard/dashboard.header.component";
 
-export default function RunsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RunsLayout({ children }) {
   return (
     <div className="min-h-screen bg-neutral-50">
       <DashboardHeader />

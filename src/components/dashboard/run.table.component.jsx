@@ -2,15 +2,10 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import type { RunListItem } from "@/lib/api";
 import CustomButton from "@/common/components/custom-button/custom-button.component";
-import { StatusBadge } from "./StatusBadge";
+import { StatusBadge } from "./status.badge.component";
 
-interface RunTableProps {
-  runs: RunListItem[];
-}
-
-function formatTime(iso: string) {
+function formatTime(iso) {
   try {
     const d = new Date(iso);
     return d.toLocaleString(undefined, {
@@ -24,7 +19,7 @@ function formatTime(iso: string) {
   }
 }
 
-export function RunTable({ runs }: RunTableProps) {
+export function RunTable({ runs }) {
   const router = useRouter();
   if (runs.length === 0) return null;
 

@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { GlassCard } from "@/components/ui/glass.card.component";
 
 const useCases = [
   { pain: "Manual triage", outcome: "Auto scoring", gradient: "from-indigo-500/20 to-violet-500/20" },
@@ -12,7 +12,7 @@ const useCases = [
 ];
 
 export function UseCasesSection() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (

@@ -15,11 +15,7 @@ function Hero3DFallback() {
   );
 }
 
-type Hero3DProps = {
-  splineSceneUrl?: string | null;
-};
-
-export function Hero3D({ splineSceneUrl }: Hero3DProps) {
+export function Hero3D({ splineSceneUrl }) {
   if (splineSceneUrl) {
     return (
       <div className="absolute inset-0 min-h-full min-w-full overflow-hidden bg-[#030712]">

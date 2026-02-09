@@ -3,15 +3,15 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Hero3D } from "@/components/canvas/Hero3D";
-import { MagneticButton } from "@/components/ui/MagneticButton";
+import { Hero3D } from "@/components/canvas/hero.3d.component";
+import { MagneticButton } from "@/components/ui/magnetic.button.component";
 
 // Set your Spline scene URL here or via NEXT_PUBLIC_SPLINE_SCENE_URL
 const SPLINE_SCENE_URL = process.env.NEXT_PUBLIC_SPLINE_SCENE_URL || null;
 
 export function HeroSection() {
   const router = useRouter();
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],

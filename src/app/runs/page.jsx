@@ -1,24 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageHeader } from "@/components/dashboard/PageHeader";
-import { StatCard } from "@/components/dashboard/StatCard";
-import { RunTable } from "@/components/dashboard/RunTable";
-import { EmptyState } from "@/components/dashboard/EmptyState";
-import { TableSkeleton } from "@/components/dashboard/Skeleton";
+import { PageHeader } from "@/components/dashboard/page.header.component";
+import { StatCard } from "@/components/dashboard/stat.card.component";
+import { RunTable } from "@/components/dashboard/run.table.component";
+import { EmptyState } from "@/components/dashboard/empty.state.component";
+import { TableSkeleton } from "@/components/dashboard/skeleton.component";
 import SimpleSelect from "@/common/components/dropdowns/simple-select/simple-select";
-import { fetchRuns, type RunListItem } from "@/lib/api";
-
-type StatusFilter = "success" | "failed" | "";
-type QualifiedFilter = boolean | "";
+import { fetchRuns } from "@/lib/api";
 
 export default function RunsPage() {
-  const [runs, setRuns] = useState<RunListItem[]>([]);
+  const [runs, setRuns] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
-  const [qualifiedFilter, setQualifiedFilter] = useState<QualifiedFilter>("");
+  const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [qualifiedFilter, setQualifiedFilter] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -78,7 +75,7 @@ export default function RunsPage() {
               label="Status"
               name="status"
               value={statusFilter}
-              onChange={(val) => setStatusFilter((val ?? "") as StatusFilter)}
+              onChange={(val) => setStatusFilter(val ?? "")}
               options={[
                 { label: "All", value: "" },
                 { label: "Success", value: "success" },

@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
+import { gsap } from "@/lib/animations/gsap";
 
-export function useScrollTrigger(
-  animation: (el: HTMLElement, gsap: typeof import("gsap")) => void,
-  deps: unknown[] = []
-) {
-  const ref = useRef<HTMLDivElement>(null);
+export function useScrollTrigger(animation, deps = []) {
+  const ref = useRef(null);
 
   useEffect(() => {
     const el = ref.current;

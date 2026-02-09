@@ -2,11 +2,7 @@
 
 import { motion } from "framer-motion";
 
-type AnimatedGradientProps = {
-  className?: string;
-};
-
-export function AnimatedGradient({ className = "" }: AnimatedGradientProps) {
+export function AnimatedGradient({ className = "" }) {
   return (
     <motion.div
       animate={{

@@ -1,7 +1,7 @@
 "use client";
 
 import FullPageLoader from "@/common/components/full-page-loader/full-page-loader.component";
-import { LenisProvider } from "@/components/providers/LenisProvider";
+import { LenisProvider } from "@/components/providers/lenis.provider.component";
 import "@/common/styles/dashboard/dashboard.style.css";
 import "@/common/styles/globals.style.css";
 import "@/common/styles/home.style.scss";

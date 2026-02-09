@@ -1,13 +1,6 @@
 import React from "react";
 
-interface StatCardProps {
-  label: string;
-  value: string | number;
-  subtext?: string;
-  variant?: "default" | "success" | "danger";
-}
-
-export function StatCard({ label, value, subtext, variant = "default" }: StatCardProps) {
+export function StatCard({ label, value, subtext, variant = "default" }) {
   const variantStyles = {
     default: "border-neutral-200 bg-white",
     success: "border-success-200 bg-success-50/30",

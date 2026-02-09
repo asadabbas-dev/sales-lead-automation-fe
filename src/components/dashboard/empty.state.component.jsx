@@ -4,21 +4,13 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import CustomButton from "@/common/components/custom-button/custom-button.component";
 
-interface EmptyStateProps {
-  title: string;
-  description: string;
-  actionLabel?: string;
-  actionHref?: string;
-  icon?: React.ReactNode;
-}
-
 export function EmptyState({
   title,
   description,
   actionLabel,
   actionHref,
   icon,
-}: EmptyStateProps) {
+}) {
   const router = useRouter();
 
   return (

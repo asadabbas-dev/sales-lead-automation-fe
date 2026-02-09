@@ -2,10 +2,10 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { GlassCard } from "@/components/ui/glass.card.component";
 
 export function WorkspaceSection() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (

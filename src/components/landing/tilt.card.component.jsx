@@ -3,21 +3,15 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
-type TiltCardProps = {
-  children: React.ReactNode;
-  className?: string;
-  intensity?: number;
-};
-
-export function TiltCard({ children, className = "", intensity = 12 }: TiltCardProps) {
-  const ref = useRef<HTMLDivElement>(null);
+export function TiltCard({ children, className = "", intensity = 12 }) {
+  const ref = useRef(null);
   const x = useMotionValue(0.5);
   const y = useMotionValue(0.5);
 
   const rotateX = useSpring(useTransform(y, [0, 1], [intensity, -intensity]), { stiffness: 300, damping: 30 });
   const rotateY = useSpring(useTransform(x, [0, 1], [-intensity, intensity]), { stiffness: 300, damping: 30 });
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const width = rect.width;

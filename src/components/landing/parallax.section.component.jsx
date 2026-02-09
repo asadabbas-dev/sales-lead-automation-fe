@@ -3,14 +3,8 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-type ParallaxSectionProps = {
-  children: React.ReactNode;
-  speed?: number;
-  className?: string;
-};
-
-export function ParallaxSection({ children, speed = 0.5, className = "" }: ParallaxSectionProps) {
-  const ref = useRef<HTMLDivElement>(null);
+export function ParallaxSection({ children, speed = 0.5, className = "" }) {
+  const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],

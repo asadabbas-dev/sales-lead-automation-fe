@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { GlassCard } from "@/components/ui/GlassCard";
+import { GlassCard } from "@/components/ui/glass.card.component";
 
 const features = [
   { title: "Ingest", desc: "Webhook → AI scores & extracts", gradient: "from-indigo-500 to-violet-500", icon: "→" },
@@ -11,7 +11,7 @@ const features = [
 ];
 
 export function FeaturesSection() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (

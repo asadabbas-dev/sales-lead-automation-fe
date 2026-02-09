@@ -1,10 +1,6 @@
 import React from "react";
 
-interface SkeletonProps {
-  className?: string;
-}
-
-export function Skeleton({ className = "" }: SkeletonProps) {
+export function Skeleton({ className = "" }) {
   return (
     <div
       className={`animate-pulse rounded-md bg-neutral-200 ${className}`}
@@ -13,7 +9,7 @@ export function Skeleton({ className = "" }: SkeletonProps) {
   );
 }
 
-export function TableSkeleton({ rows = 5 }: { rows?: number }) {
+export function TableSkeleton({ rows = 5 }) {
   return (
     <div className="space-y-4">
       {Array.from({ length: rows }).map((_, i) => (

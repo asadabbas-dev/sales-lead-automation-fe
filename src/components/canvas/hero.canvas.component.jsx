@@ -9,7 +9,7 @@ const Canvas = dynamic(() => import("@react-three/fiber").then((mod) => mod.Canv
   loading: () => <CanvasFallback />,
 });
 
-const HeroScene = dynamic(() => import("./HeroScene").then((mod) => ({ default: mod.HeroScene })), {
+const HeroScene = dynamic(() => import("./hero.scene.component").then((mod) => ({ default: mod.HeroScene })), {
   ssr: false,
 });
 

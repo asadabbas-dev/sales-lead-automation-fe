@@ -1,17 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
-type MagneticButtonProps = {
-  children: React.ReactNode;
-  className?: string;
-  strength?: number;
-  onClick?: () => void;
-};
-
-export function MagneticButton({ children, className = "", strength = 0.4, onClick }: MagneticButtonProps) {
-  const ref = useRef<HTMLButtonElement>(null);
+export function MagneticButton({ children, className = "", strength = 0.4, onClick }) {
+  const ref = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -19,7 +12,7 @@ export function MagneticButton({ children, className = "", strength = 0.4, onCli
   const springX = useSpring(x, springConfig);
   const springY = useSpring(y, springConfig);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseMove = (e) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;

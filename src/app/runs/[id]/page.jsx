@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import CustomButton from "@/common/components/custom-button/custom-button.component";
-import { PageHeader } from "@/components/dashboard/PageHeader";
-import { StatusBadge } from "@/components/dashboard/StatusBadge";
-import { CollapsibleSection } from "@/components/dashboard/CollapsibleSection";
-import { Skeleton } from "@/components/dashboard/Skeleton";
-import { fetchRun, type RunDetailResponse } from "@/lib/api";
+import { PageHeader } from "@/components/dashboard/page.header.component";
+import { StatusBadge } from "@/components/dashboard/status.badge.component";
+import { CollapsibleSection } from "@/components/dashboard/collapsible.section.component";
+import { Skeleton } from "@/components/dashboard/skeleton.component";
+import { fetchRun } from "@/lib/api";
 
-function formatTime(iso: string) {
+function formatTime(iso) {
   try {
     return new Date(iso).toLocaleString();
   } catch {
@@ -21,8 +21,8 @@ function formatTime(iso: string) {
 export default function RunDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const id = params.id as string;
-  const [run, setRun] = useState<RunDetailResponse | null>(null);
+  const id = params.id;
+  const [run, setRun] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
