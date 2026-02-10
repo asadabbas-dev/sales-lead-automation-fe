@@ -1,19 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { MagneticButton } from "@/components/ui/magnetic.button.component";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "Workspace", href: "#workspace" },
-  { label: "Use Cases", href: "#use-cases" },
+  { label: "Overview", href: "/" },
+  { label: "Automation Runs", href: "/runs" },
 ];
 
 export function LandingHeader() {
   const router = useRouter();
   const { scrollY } = useScroll();
-  const headerBg = useTransform(scrollY, [0, 80], ["rgba(3,7,18,0.6)", "rgba(3,7,18,0.95)"]);
+  const headerBg = useTransform(scrollY, [0, 80], ["rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)"]);
 
   return (
     <motion.header
@@ -38,13 +38,13 @@ export function LandingHeader() {
 
           <nav className="hidden items-center gap-6 sm:flex">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
-                className="text-landing-body font-medium text-slate-400 transition-colors hover:text-white"
+                className="text-landing-body font-medium text-slate-200 transition-colors hover:text-white"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -56,7 +56,7 @@ export function LandingHeader() {
             <MagneticButton
               strength={0.2}
               onClick={() => router.push("/runs")}
-              className="rounded-lg bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-500 bg-[length:200%_100%] px-4 py-2 text-landing-body font-semibold text-white transition-all duration-500 hover:bg-right"
+              className="rounded-lg bg-white px-4 py-2 text-landing-body font-semibold text-black shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(255,255,255,0.5)]"
             >
               View Runs
             </MagneticButton>

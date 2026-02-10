@@ -7,10 +7,10 @@ export function AnimatedGradient({ className = "" }) {
     <motion.div
       animate={{
         background: [
-          "radial-gradient(ellipse 80% 50% at 50% 20%, rgba(99, 102, 241, 0.3) 0%, transparent 50%)",
-          "radial-gradient(ellipse 80% 50% at 50% 20%, rgba(139, 92, 246, 0.25) 0%, transparent 50%)",
-          "radial-gradient(ellipse 80% 50% at 50% 20%, rgba(6, 182, 212, 0.3) 0%, transparent 50%)",
-          "radial-gradient(ellipse 80% 50% at 50% 20%, rgba(99, 102, 241, 0.3) 0%, transparent 50%)",
+          "radial-gradient(ellipse 80% 50% at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%)",
+          "radial-gradient(ellipse 80% 50% at 50% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%)",
+          "radial-gradient(ellipse 80% 50% at 50% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%)",
+          "radial-gradient(ellipse 80% 50% at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%)",
         ],
       }}
       transition={{ duration: 8, repeat: Infinity, ease: "linear" }}

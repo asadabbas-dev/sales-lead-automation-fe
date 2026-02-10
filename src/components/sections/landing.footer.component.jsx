@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const links = [
-  { label: "Features", href: "#features" },
-  { label: "Workspace", href: "#workspace" },
-  { label: "Use Cases", href: "#use-cases" },
+  { label: "Overview", href: "/" },
+  { label: "Automation Runs", href: "/runs" },
 ];
 
 export function LandingFooter() {
@@ -18,24 +18,17 @@ export function LandingFooter() {
           <span className="font-display text-landing-card font-semibold text-white">Lead Ops</span>
           <nav className="flex gap-8">
             {links.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
-                className="text-landing-body text-slate-400 transition-colors hover:text-white"
+                className="text-landing-body text-slate-200 transition-colors hover:text-white"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
-            <button
-              type="button"
-              onClick={() => router.push("/runs")}
-              className="text-landing-body text-slate-400 transition-colors hover:text-white"
-            >
-              Dashboard
-            </button>
           </nav>
         </div>
-        <p className="mt-6 text-center text-landing-meta text-slate-500 sm:text-left">
+        <p className="mt-6 text-center text-sm text-slate-300 sm:text-left">
           © {new Date().getFullYear()} Lead Ops. Automated lead qualification.
         </p>
       </div>

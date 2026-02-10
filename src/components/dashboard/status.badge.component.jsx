@@ -1,17 +1,41 @@
 import React from "react";
 
 const statusConfig = {
-  success: { bg: "bg-success-100", text: "text-success-800", label: "Success" },
-  failed: { bg: "bg-danger-100", text: "text-danger-800", label: "Failed" },
-  qualified: { bg: "bg-success-100", text: "text-success-800", label: "Qualified" },
-  unqualified: { bg: "bg-neutral-100", text: "text-neutral-700", label: "Unqualified" },
+  success: {
+    bg: "bg-cyan-500/20",
+    text: "text-cyan-300",
+    border: "border-cyan-500/30",
+    label: "Success",
+    glow: "shadow-[0_0_15px_rgba(59,130,246,0.4)]",
+  },
+  failed: {
+    bg: "bg-red-500/20",
+    text: "text-red-300",
+    border: "border-red-500/30",
+    label: "Failed",
+    glow: "shadow-[0_0_15px_rgba(239,68,68,0.4)]",
+  },
+  qualified: {
+    bg: "bg-cyan-500/20",
+    text: "text-cyan-300",
+    border: "border-cyan-500/30",
+    label: "Qualified",
+    glow: "shadow-[0_0_15px_rgba(59,130,246,0.4)]",
+  },
+  unqualified: {
+    bg: "bg-slate-500/20",
+    text: "text-slate-300",
+    border: "border-slate-500/30",
+    label: "Unqualified",
+    glow: "",
+  },
 };
 
 export function StatusBadge({ status, label }) {
   const config = statusConfig[status] || statusConfig.unqualified;
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.bg} ${config.text}`}
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all ${config.bg} ${config.text} ${config.border} ${config.glow}`}
     >
       {label ?? config.label}
     </span>

@@ -24,41 +24,41 @@ export function RunTable({ runs }) {
   if (runs.length === 0) return null;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_0_20px_rgba(255,255,255,0.05)]">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-neutral-200">
+        <table className="min-w-full divide-y divide-white/10">
           <thead>
-            <tr className="bg-neutral-50">
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
+            <tr className="bg-white/5">
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Time
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Source
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Status
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Qualified
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Score
               </th>
-              <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-neutral-500">
+              <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Action
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-200 bg-white">
+          <tbody className="divide-y divide-white/10 bg-transparent">
             {runs.map((run) => (
               <tr
                 key={run.id}
-                className="transition-colors hover:bg-neutral-50/50"
+                className="transition-colors hover:bg-white/5"
               >
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-neutral-600">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-300">
                   {formatTime(run.created_at)}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-neutral-900">
+                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-white">
                   {run.source}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
@@ -66,14 +66,14 @@ export function RunTable({ runs }) {
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   {run.qualified === null ? (
-                    <span className="text-sm text-neutral-400">—</span>
+                    <span className="text-sm text-slate-500">—</span>
                   ) : (
                     <StatusBadge
                       status={run.qualified ? "qualified" : "unqualified"}
                     />
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-neutral-600">
+                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-200">
                   {run.score ?? "—"}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-right">

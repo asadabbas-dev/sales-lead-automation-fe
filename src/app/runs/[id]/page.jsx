@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/dashboard/page.header.component";
 import { StatusBadge } from "@/components/dashboard/status.badge.component";
 import { CollapsibleSection } from "@/components/dashboard/collapsible.section.component";
 import { Skeleton } from "@/components/dashboard/skeleton.component";
-import { fetchRun } from "@/lib/api";
+import { fetchRun } from "@/common/utils/api";
 
 function formatTime(iso) {
   try {
@@ -24,7 +24,7 @@ export default function RunDetailPage() {
   const id = params.id;
   const [run, setRun] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = (useState < string) | (null > null);
 
   useEffect(() => {
     if (!id) return;
@@ -50,7 +50,10 @@ export default function RunDetailPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Link href="/runs" className="text-sm text-neutral-500 hover:text-neutral-700">
+          <Link
+            href="/runs"
+            className="text-sm text-slate-400 hover:text-yellow-400 transition-colors"
+          >
             ← Back to Runs
           </Link>
         </div>
@@ -67,17 +70,20 @@ export default function RunDetailPage() {
   if (error || !run) {
     return (
       <div className="space-y-6">
-        <Link href="/runs" className="text-sm text-neutral-500 hover:text-neutral-700">
+        <Link
+          href="/runs"
+          className="text-sm text-slate-400 hover:text-yellow-400 transition-colors"
+        >
           ← Back to Runs
         </Link>
-        <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-6">
-          <h3 className="font-display text-lg font-semibold text-danger-800">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-5 py-6 backdrop-blur-sm">
+          <h3 className="font-display text-lg font-semibold text-red-300">
             Run not found
           </h3>
-          <p className="mt-2 text-sm text-danger-700">
+          <p className="mt-2 text-sm text-red-200">
             {error || "This run may have been deleted or the ID is invalid."}
           </p>
-          <p className="mt-4 text-sm text-danger-600">
+          <p className="mt-4 text-sm text-red-300/80">
             Go back to the runs list to inspect other runs.
           </p>
           <CustomButton
@@ -100,7 +106,10 @@ export default function RunDetailPage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-4">
-        <Link href="/runs" className="text-sm text-neutral-500 hover:text-neutral-700">
+        <Link
+          href="/runs"
+          className="text-sm text-slate-400 hover:text-yellow-400 transition-colors"
+        >
           ← Back to Runs
         </Link>
       </div>
@@ -111,39 +120,39 @@ export default function RunDetailPage() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-neutral-200 bg-white p-4">
-          <p className="text-xs font-medium text-neutral-500">Status</p>
-          <div className="mt-1">
+        <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+          <p className="text-xs font-medium text-slate-400">Status</p>
+          <div className="mt-2">
             <StatusBadge status={run.status} />
           </div>
         </div>
-        <div className="rounded-xl border border-neutral-200 bg-white p-4">
-          <p className="text-xs font-medium text-neutral-500">Qualified</p>
-          <div className="mt-1">
+        <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+          <p className="text-xs font-medium text-slate-400">Qualified</p>
+          <div className="mt-2">
             {qualified === undefined ? (
-              <span className="text-sm text-neutral-400">—</span>
+              <span className="text-sm text-slate-500">—</span>
             ) : (
-              <StatusBadge
-                status={qualified ? "qualified" : "unqualified"}
-              />
+              <StatusBadge status={qualified ? "qualified" : "unqualified"} />
             )}
           </div>
         </div>
-        <div className="rounded-xl border border-neutral-200 bg-white p-4">
-          <p className="text-xs font-medium text-neutral-500">Score</p>
-          <p className="mt-1 font-display text-xl font-semibold text-neutral-900">
+        <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+          <p className="text-xs font-medium text-slate-400">Score</p>
+          <p className="mt-2 font-display text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             {score ?? "—"}
           </p>
         </div>
-        <div className="rounded-xl border border-neutral-200 bg-white p-4">
-          <p className="text-xs font-medium text-neutral-500">Source</p>
-          <p className="mt-1 text-sm font-medium text-neutral-900">{run.source}</p>
+        <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+          <p className="text-xs font-medium text-slate-400">Source</p>
+          <p className="mt-2 text-sm font-semibold text-white">
+            {run.source}
+          </p>
         </div>
       </div>
 
       {lead && (
         <div>
-          <h3 className="mb-4 font-display text-lg font-semibold text-neutral-900">
+          <h3 className="mb-5 font-display text-xl font-semibold text-white">
             Lead summary
           </h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -151,18 +160,29 @@ export default function RunDetailPage() {
               { label: "Name", value: lead.name },
               { label: "Email", value: lead.email },
               { label: "Phone", value: lead.phone },
-              { label: "Budget", value: lead.budget != null ? `$${lead.budget.toLocaleString()}` : null },
+              {
+                label: "Budget",
+                value:
+                  lead.budget != null
+                    ? `$${lead.budget.toLocaleString()}`
+                    : null,
+              },
               { label: "Intent", value: lead.intent },
               { label: "Urgency", value: lead.urgency },
               { label: "Industry", value: lead.industry },
             ].map(
               ({ label, value }) =>
                 value != null && (
-                  <div key={label} className="rounded-lg border border-neutral-200 bg-white p-4">
-                    <p className="text-xs font-medium text-neutral-500">{label}</p>
-                    <p className="mt-1 text-sm text-neutral-900">{value}</p>
+                  <div
+                    key={label}
+                    className="rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm p-4 shadow-[0_0_15px_rgba(255,255,255,0.03)]"
+                  >
+                    <p className="text-xs font-medium text-slate-400">
+                      {label}
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-white">{value}</p>
                   </div>
-                )
+                ),
             )}
           </div>
         </div>
@@ -170,14 +190,14 @@ export default function RunDetailPage() {
 
       {reasons.length > 0 && (
         <div>
-          <h3 className="mb-4 font-display text-lg font-semibold text-neutral-900">
+          <h3 className="mb-5 font-display text-xl font-semibold text-white">
             Qualification reasons
           </h3>
           <ul className="flex flex-wrap gap-2">
             {reasons.map((r, i) => (
               <li
                 key={i}
-                className="rounded-full bg-primary-50 px-3 py-1 text-sm text-primary-800"
+                className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-medium text-cyan-300"
               >
                 {r}
               </li>
@@ -187,25 +207,25 @@ export default function RunDetailPage() {
       )}
 
       {run.error && (
-        <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4">
-          <h3 className="font-display text-sm font-semibold text-danger-800">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-5 py-4 backdrop-blur-sm">
+          <h3 className="font-display text-sm font-semibold text-red-300">
             Error
           </h3>
-          <p className="mt-2 font-mono text-sm text-danger-700 whitespace-pre-wrap">
+          <p className="mt-2 font-mono text-sm text-red-200 whitespace-pre-wrap">
             {run.error}
           </p>
         </div>
       )}
 
       <CollapsibleSection title="Raw payload" defaultOpen={false}>
-        <pre className="overflow-x-auto rounded-lg bg-neutral-100 p-4 text-xs text-neutral-700">
+        <pre className="overflow-x-auto rounded-lg border border-white/10 bg-black/50 p-4 text-xs text-slate-300 font-mono">
           {JSON.stringify(run.payload_json, null, 2)}
         </pre>
       </CollapsibleSection>
 
       {run.result_json && (
         <CollapsibleSection title="Full result" defaultOpen={false}>
-          <pre className="overflow-x-auto rounded-lg bg-neutral-100 p-4 text-xs text-neutral-700">
+          <pre className="overflow-x-auto rounded-lg border border-white/10 bg-black/50 p-4 text-xs text-slate-300 font-mono">
             {JSON.stringify(run.result_json, null, 2)}
           </pre>
         </CollapsibleSection>
