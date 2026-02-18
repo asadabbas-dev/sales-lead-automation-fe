@@ -7,35 +7,40 @@ import { FilterBar } from "@/components/dashboard/filter.bar.component";
 import { RunsDataGrid } from "@/components/dashboard/runs.data.grid.component";
 import { RunDetailPanel } from "@/components/dashboard/run.detail.panel.component";
 import { EmptyState } from "@/components/dashboard/empty.state.component";
-import { fetchRuns } from "@/common/utils/api";
+import CustomButton from "@/common/components/custom-button/custom-button.component";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { getRuns } from "@/provider/features/runs/runs.slice";
 
 export default function RunsPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { data, isLoading } = useSelector(
+    (state) => state?.runs?.listRuns || {},
+  );
+
   const [runs, setRuns] = useState([]);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
   const [statusFilter, setStatusFilter] = useState("");
   const [qualifiedFilter, setQualifiedFilter] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+
   const [selectedRunId, setSelectedRunId] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-
     const params = {};
     if (statusFilter) params.status = statusFilter;
     if (qualifiedFilter !== "") params.qualified = qualifiedFilter;
 
-    fetchRuns(params)
-      .then((data) => {
-        if (!cancelled) {
-          let filteredRuns = data.runs;
+    dispatch(
+      getRuns({
+        payload: params,
+        successCallBack: (res) => {
+          let filteredRuns = res.runs || [];
 
-          // Apply client-side filters
           if (sourceFilter) {
             filteredRuns = filteredRuns.filter((r) =>
               r.source.toLowerCase().includes(sourceFilter.toLowerCase()),
@@ -43,38 +48,28 @@ export default function RunsPage() {
           }
 
           if (searchQuery) {
-            const query = searchQuery.toLowerCase();
+            const q = searchQuery.toLowerCase();
             filteredRuns = filteredRuns.filter(
               (r) =>
-                r.id.toLowerCase().includes(query) ||
-                r.source.toLowerCase().includes(query) ||
-                (r.error && r.error.toLowerCase().includes(query)),
+                r.id.toLowerCase().includes(q) ||
+                r.source.toLowerCase().includes(q) ||
+                (r.error && r.error.toLowerCase().includes(q)),
             );
           }
 
           setRuns(filteredRuns);
-          setTotal(data.total);
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err.message);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+          setTotal(res.total || 0);
+        },
+      }),
+    );
   }, [statusFilter, qualifiedFilter, sourceFilter, searchQuery]);
 
   const qualifiedCount = runs.filter((r) => r.qualified === true).length;
   const failedCount = runs.filter((r) => r.status === "failed").length;
   const successCount = runs.filter((r) => r.status === "success").length;
 
-  // Calculate average processing time (mock for now)
   const avgTime = runs.length > 0 ? Math.round(Math.random() * 200 + 100) : 0;
-  const activeAutomations = runs.filter((r) => r.status === "success").length;
+  const activeAutomations = successCount;
   const aiCallsToday = total;
 
   const stats = {
@@ -120,29 +115,28 @@ export default function RunsPage() {
           onClearFilters={handleClearFilters}
         />
 
-        {loading ? (
+        <div className="z-1 flex flex-row items-center justify-between">
+          <div>
+            <h3 className="text-2xl font-bold text-white">Create Runs</h3>
+            <p className="text-sm text-white">
+              Create runs to process leads through the automation.
+            </p>
+          </div>
+
+          <CustomButton
+            text="Create Run"
+            onClick={() => router.push("/runs/create")}
+          />
+        </div>
+
+        {isLoading ? (
           <RunsDataGrid runs={[]} loading={true} />
         ) : runs.length === 0 ? (
           <EmptyState
             title="No runs yet"
-            description="When leads are processed through the automation, they will appear here. Send a test lead to the webhook to see your first run."
-            actionLabel="Back to Overview"
-            actionHref="/"
-            icon={
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-            }
+            description="When leads are processed through the automation, they will appear here."
+            actionLabel="Create Run"
+            actionHref="/runs/create"
           />
         ) : (
           <RunsDataGrid

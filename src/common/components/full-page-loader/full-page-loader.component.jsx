@@ -1,15 +1,40 @@
+"use client";
+
 import { Package } from "lucide-react";
 
 function FullPageLoader() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-primary-500 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse">
-          <Package className="w-8 h-8 text-white" />
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Full Page Loader</h1>
-        <div className="w-36 h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div className="w-full h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full animate-pulse"></div>
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black">
+      {/* Circular spinner */}
+      <div className="relative w-20 h-20 mb-4">
+        <svg
+          className="absolute inset-0 w-full h-full animate-spin text-white"
+          viewBox="0 0 50 50"
+        >
+          <circle
+            className="opacity-25"
+            cx="25"
+            cy="25"
+            r="20"
+            stroke="currentColor"
+            strokeWidth="5"
+            fill="none"
+          />
+          <circle
+            className="opacity-75"
+            cx="25"
+            cy="25"
+            r="20"
+            stroke="currentColor"
+            strokeWidth="5"
+            strokeLinecap="round"
+            fill="none"
+            strokeDasharray="90,150"
+          />
+        </svg>
+        {/* Center icon */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Package className="w-10 h-10 text-white" />
         </div>
       </div>
     </div>

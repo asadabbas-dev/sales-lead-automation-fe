@@ -95,7 +95,7 @@
   }
 
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 
+    @apply btn bg-white text-black hover:bg-white/90 
            focus:ring-primary-500 shadow-sm;
   }
 
@@ -152,8 +152,8 @@
   }
 
   .form-input {
-    @apply block w-full px-3 py-2 border border-border-light rounded-md 
-           text-text-primary placeholder-text-tertiary bg-white
+    @apply block w-full px-3 py-2 border border-black rounded-md 
+           text-white placeholder-text-tertiary bg-black
            focus:border-primary-500 focus:ring-1 focus:ring-primary-500
            disabled:bg-background-tertiary disabled:text-text-tertiary
            disabled:cursor-not-allowed transition-colors duration-200;

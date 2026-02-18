@@ -1,9 +1,10 @@
 "use client";
 
+import CustomInput from "@/common/components/custom-input/custom-input.component";
+import SimpleSelect from "@/common/components/dropdowns/simple-select/simple-select";
 import { motion } from "framer-motion";
-import { Search, Filter, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useState } from "react";
-import { DarkSelect } from "./dark.select.component";
 
 export function FilterBar({
   statusFilter,
@@ -31,27 +32,23 @@ export function FilterBar({
       <div className="flex flex-wrap items-end gap-4">
         {/* Search */}
         <div className="flex-1 min-w-[200px]">
-          <label className="mb-1.5 block text-xs font-semibold text-slate-200">
-            Search
-          </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
+            <CustomInput
+              label="Search"
+              name="search"
               value={searchQuery || ""}
               onChange={(e) => onSearchChange?.(e.target.value)}
-              placeholder="Search runs, IDs, sources..."
-              className="w-full rounded-lg border border-white/10 bg-black/50 px-10 py-2 text-sm text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+              placeholder="Search runs, IDs, sources"
+              startIcon={<Search className="h-4 w-4 text-" />}
             />
           </div>
         </div>
 
         {/* Status Filter */}
         <div className="w-full sm:w-48">
-          <label className="mb-1.5 block text-xs font-semibold text-slate-200">
-            Status
-          </label>
-          <DarkSelect
+          <SimpleSelect
+            label="Status"
+            name="status"
             value={statusFilter || ""}
             onChange={(val) => onStatusChange?.(val || "")}
             options={[
@@ -65,14 +62,13 @@ export function FilterBar({
 
         {/* Qualified Filter */}
         <div className="w-full sm:w-48">
-          <label className="mb-1.5 block text-xs font-semibold text-slate-200">
-            Qualified
-          </label>
-          <DarkSelect
+          <SimpleSelect
+            label="Qualified"
+            name="qualified"
             value={qualifiedFilter === "" ? "" : String(qualifiedFilter)}
             onChange={(val) =>
               onQualifiedChange?.(
-                val === "" || val == null ? "" : val === "true"
+                val === "" || val == null ? "" : val === "true",
               )
             }
             options={[
@@ -86,10 +82,9 @@ export function FilterBar({
 
         {/* Source Filter */}
         <div className="w-full sm:w-48">
-          <label className="mb-1.5 block text-xs font-semibold text-slate-200">
-            Source
-          </label>
-          <DarkSelect
+          <SimpleSelect
+            label="Source"
+            name="source"
             value={sourceFilter || ""}
             onChange={(val) => onSourceChange?.(val || "")}
             options={[
@@ -101,6 +96,36 @@ export function FilterBar({
             placeholder="All"
           />
         </div>
+      </div>
+
+      {/* Quick Toggles */}
+      <div className="flex justify-between items-center">
+        <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-3">
+          <button
+            className={`rounded-md border px-3 py-1 text-xs font-medium transition-colors ${
+              statusFilter === "failed"
+                ? "border-red-500/50 bg-red-500/20 text-white"
+                : "border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+            }`}
+            onClick={() =>
+              onStatusChange?.(statusFilter === "failed" ? "" : "failed")
+            }
+          >
+            Errors Only
+          </button>
+          <button
+            className={`rounded-md border px-3 py-1 text-xs font-medium transition-colors ${
+              qualifiedFilter === true
+                ? "border-cyan-500/50 bg-cyan-500/20 text-white"
+                : "border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+            }`}
+            onClick={() =>
+              onQualifiedChange?.(qualifiedFilter === true ? "" : true)
+            }
+          >
+            Qualified Only
+          </button>
+        </div>
 
         {/* Clear Filters */}
         {hasActiveFilters && (
@@ -108,43 +133,12 @@ export function FilterBar({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={onClearFilters}
-            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+            className="flex items-center gap-2 rounded-lg border border-white bg-white text-black px-3 py-1 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white"
           >
             <X className="h-4 w-4" />
-            Clear
+            Clear Filters
           </motion.button>
         )}
-      </div>
-
-      {/* Quick Toggles */}
-      <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-3">
-        <span className="text-xs font-semibold text-slate-200">Quick filters:</span>
-        <button
-          className={`rounded-md border px-3 py-1 text-xs font-medium transition-colors ${
-            statusFilter === "failed"
-              ? "border-red-500/50 bg-red-500/20 text-red-300"
-              : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
-          }`}
-          onClick={() =>
-            onStatusChange?.(statusFilter === "failed" ? "" : "failed")
-          }
-        >
-          Errors Only
-        </button>
-        <button
-          className={`rounded-md border px-3 py-1 text-xs font-medium transition-colors ${
-            qualifiedFilter === true
-              ? "border-cyan-500/50 bg-cyan-500/20 text-cyan-300"
-              : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
-          }`}
-          onClick={() =>
-            onQualifiedChange?.(
-              qualifiedFilter === true ? "" : true
-            )
-          }
-        >
-          Qualified Only
-        </button>
       </div>
     </motion.div>
   );

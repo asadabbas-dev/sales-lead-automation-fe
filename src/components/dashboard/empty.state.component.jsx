@@ -19,9 +19,7 @@ export function EmptyState({
           {icon}
         </div>
       )}
-      <h3 className="font-display text-xl font-semibold text-white">
-        {title}
-      </h3>
+      <h3 className="font-display text-xl font-semibold text-white">{title}</h3>
       <p className="mt-2 max-w-sm text-sm text-slate-300">{description}</p>
       {actionLabel && actionHref && (
         <button

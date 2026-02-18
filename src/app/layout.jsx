@@ -1,17 +1,17 @@
 "use client";
 
 import FullPageLoader from "@/common/components/full-page-loader/full-page-loader.component";
-import { LenisProvider } from "@/components/providers/lenis.provider.component";
 import "@/common/styles/dashboard/dashboard.style.css";
 import "@/common/styles/globals.style.css";
 import "@/common/styles/home.style.scss";
+import { LenisProvider } from "@/components/providers/lenis.provider.component";
 import { persistor, store } from "@/provider/store";
 import styled from "@emotion/styled";
 import { StyledEngineProvider } from "@mui/material";
 import { usePathname } from "next/navigation";
 import { MaterialDesignContent, SnackbarProvider } from "notistack";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
@@ -45,12 +45,11 @@ function LayoutWrapper({ children }) {
 
   return (
     <LenisProvider>
-      {loading && <FullPageLoader />}
-      <React.Fragment>
-        {/* {!loading && <Header />} */}
+      {loading ? (
+        <FullPageLoader />
+      ) : (
         <div className={pathname === "/" ? "" : "bg-white"}>{children}</div>
-        {/* {!loading && <Footer />} */}
-      </React.Fragment>
+      )}
     </LenisProvider>
   );
 }

@@ -54,7 +54,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
     loading = false,
     noOptionsMessage = "No options found",
   },
-  ref
+  ref,
 ) {
   const {
     inputRef,
@@ -103,12 +103,14 @@ const SimpleSelect = forwardRef(function SimpleSelect(
 
     // State classes
     const stateClasses = hasError ? "form-input-error" : "";
-    const disabledClasses = disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer";
+    const disabledClasses = disabled
+      ? "opacity-60 cursor-not-allowed"
+      : "cursor-pointer";
     const focusClasses = showMenu
-      ? "ring-2 ring-primary-500 ring-opacity-20 border-primary-500"
+      ? "ring-2 ring-white/10 ring-opacity-20 border-white/10"
       : "";
 
-    return `${baseClasses} ${sizeClasses[size] || sizeClasses.md} ${variantClasses[variant]} ${stateClasses} ${disabledClasses} ${focusClasses} ${className}`.trim();
+    return `${baseClasses} ${sizeClasses[size] || sizeClasses.md} ${variantClasses[variant]} ${stateClasses} ${disabledClasses} ${className}`.trim();
   };
 
   // Container classes
@@ -119,7 +121,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
   // Get dropdown position classes
   const getDropdownClasses = () => {
     const baseClasses =
-      "absolute w-full bg-white border border-neutral-200 rounded-sm shadow-2xl overflow-hidden";
+      "absolute w-full bg-black border border-white/10 rounded-sm shadow-2xl overflow-hidden";
     const positionClasses = "top-full mt-1";
 
     return `${baseClasses} ${positionClasses}`;
@@ -140,7 +142,8 @@ const SimpleSelect = forwardRef(function SimpleSelect(
 
   // Check if we should show placeholder
   const displayValue = getDisplay();
-  const isPlaceholder = displayValue === placeholder || displayValue === "Select an option...";
+  const isPlaceholder =
+    displayValue === placeholder || displayValue === "Select an option...";
 
   return (
     <div className={containerClasses}>
@@ -169,8 +172,12 @@ const SimpleSelect = forwardRef(function SimpleSelect(
           <div className="flex items-center justify-between w-full">
             <div className="flex-1 truncate pr-2">
               {loading ? (
-                <span className="flex items-center text-neutral-500">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                <span className="flex items-center text-white">
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
                     <circle
                       className="opacity-25"
                       cx="12"
@@ -188,7 +195,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
                   Loading...
                 </span>
               ) : (
-                <span className={isPlaceholder ? "text-neutral-400" : "text-neutral-800"}>
+                <span className={isPlaceholder ? "text-white" : "text-white"}>
                   {displayValue}
                 </span>
               )}
@@ -203,10 +210,15 @@ const SimpleSelect = forwardRef(function SimpleSelect(
                     e.stopPropagation();
                     clearSelection();
                   }}
-                  className="p-1 hover:bg-neutral-100 rounded text-neutral-400 hover:text-neutral-600 transition-colors"
+                  className="p-1 hover:bg-white/10 rounded text-white hover:text-white transition-colors"
                   aria-label="Clear selection"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -231,7 +243,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
           <div className={getDropdownClasses()}>
             {/* Search Input */}
             {isSearchable && (
-              <div className="p-3 border-b border-neutral-100 bg-neutral-50">
+              <div className="p-3 border-b border-white/10 bg-black">
                 <CustomInput
                   ref={searchRef}
                   name="search"
@@ -239,14 +251,14 @@ const SimpleSelect = forwardRef(function SimpleSelect(
                   value={searchValue}
                   placeholder="Search options..."
                   size="sm"
-                  className="border-neutral-300"
+                  className="border-white/10"
                 />
               </div>
             )}
 
             {/* Options List */}
             <div
-              className="overflow-auto"
+              className="overflow-auto z-[999999]"
               style={{ maxHeight }}
               role="listbox"
               aria-multiselectable={isMulti}
@@ -256,10 +268,10 @@ const SimpleSelect = forwardRef(function SimpleSelect(
                   <div
                     key={`${option.value}-${index}`}
                     onClick={() => onItemClick(option)}
-                    className={`cursor-pointer px-4 py-3 text-sm transition-colors hover:bg-primary-50 ${
+                    className={`cursor-pointer px-4 py-3 text-sm transition-colors hover:bg-white/10 ${
                       isSelected(option)
-                        ? "bg-primary-100 text-primary-700 font-medium"
-                        : "text-neutral-700"
+                        ? "bg-white/10 text-white font-medium"
+                        : "text-white"
                     }`}
                     role="option"
                     aria-selected={isSelected(option)}
@@ -268,7 +280,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
                       <span className="truncate">{option.label}</span>
                       {isMulti && isSelected(option) && (
                         <svg
-                          className="w-4 h-4 text-primary-600 ml-2 flex-shrink-0"
+                          className="w-4 h-4 text-white ml-2 flex-shrink-0"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -283,7 +295,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
                   </div>
                 ))
               ) : (
-                <div className="px-4 py-6 text-sm text-neutral-500 text-center">
+                <div className="px-4 py-6 text-sm text-white text-center">
                   {isSearchable && searchValue
                     ? `No results for "${searchValue}"`
                     : noOptionsMessage}
@@ -299,7 +311,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
             {errorMessage ? (
               <FieldError className="normal-case" error={errorMessage} />
             ) : (
-              helperText && <p className="text-xs text-neutral-500">{helperText}</p>
+              helperText && <p className="text-xs text-white">{helperText}</p>
             )}
           </div>
         )}
@@ -315,9 +327,10 @@ SimpleSelect.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
       disabled: PropTypes.bool,
-    })
+    }),
   ).isRequired,
   isMulti: PropTypes.bool,
   isSearchable: PropTypes.bool,
@@ -325,12 +338,16 @@ SimpleSelect.propTypes = {
   defaultValue: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
-    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    ),
   ]),
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
-    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    ),
   ]),
   disabled: PropTypes.bool,
   isRequired: PropTypes.bool,

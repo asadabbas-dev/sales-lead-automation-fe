@@ -32,7 +32,10 @@ export function DashboardHeader() {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setProfileOpen(false);
       }
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
         setNotificationsOpen(false);
       }
     };
@@ -44,16 +47,13 @@ export function DashboardHeader() {
   return (
     <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-black/80 backdrop-blur-xl">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold text-white">AI Runs</h1>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">
-              System activity, workflows, and AI execution history
-            </p>
-          </div>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl font-bold text-white">AI Runs</h1>
+        </div>
 
-          <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
           {/* Notifications */}
-          <div ref={notificationsRef} className="relative">
+          {/* <div ref={notificationsRef} className="relative">
             <button
               onClick={() => {
                 setNotificationsOpen(!notificationsOpen);
@@ -83,7 +83,9 @@ export function DashboardHeader() {
                     className="absolute right-0 top-full z-50 mt-2 w-80 rounded-lg border border-white/10 bg-black/95 backdrop-blur-xl shadow-2xl"
                   >
                     <div className="border-b border-white/10 p-4">
-                      <h3 className="text-sm font-semibold text-white">Notifications</h3>
+                      <h3 className="text-sm font-semibold text-white">
+                        Notifications
+                      </h3>
                     </div>
                     <div className="max-h-96 overflow-y-auto">
                       {notifications.length === 0 ? (
@@ -114,10 +116,10 @@ export function DashboardHeader() {
                 </>
               )}
             </AnimatePresence>
-          </div>
+          </div> */}
 
           {/* Profile Dropdown */}
-          <div ref={profileRef} className="relative">
+          {/* <div ref={profileRef} className="relative">
             <button
               onClick={() => {
                 setProfileOpen(!profileOpen);
@@ -139,7 +141,9 @@ export function DashboardHeader() {
               {!isCollapsed && (
                 <>
                   <div className="hidden text-left sm:block">
-                    <p className="text-sm font-medium text-white">{user.name}</p>
+                    <p className="text-sm font-medium text-white">
+                      {user.name}
+                    </p>
                     <p className="text-xs text-slate-400">{user.email}</p>
                   </div>
                   <ChevronDown
@@ -165,8 +169,12 @@ export function DashboardHeader() {
                     className="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border border-white/10 bg-black/95 backdrop-blur-xl shadow-2xl"
                   >
                     <div className="border-b border-white/10 p-4">
-                      <p className="text-sm font-semibold text-white">{user.name}</p>
-                      <p className="mt-1 text-xs text-slate-400">{user.email}</p>
+                      <p className="text-sm font-semibold text-white">
+                        {user.name}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-400">
+                        {user.email}
+                      </p>
                     </div>
                     <div className="p-2">
                       <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-white/10 hover:text-white">
@@ -187,7 +195,7 @@ export function DashboardHeader() {
                 </>
               )}
             </AnimatePresence>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>

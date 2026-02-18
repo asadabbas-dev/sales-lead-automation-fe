@@ -4,17 +4,17 @@
 const themeColors = {
   // Primary indigo system
   primary: {
-    50: "#F0F4FF",
-    100: "#E0E9FF",
-    200: "#C7D6FE",
-    300: "#A5B8FC",
-    400: "#818CF8",
-    500: "#6366F1",
-    600: "#4F46E5",
-    700: "#4338CA",
-    800: "#3730A3",
-    900: "#312E81",
-    950: "#1E1B4B",
+    50: "#FFFFFF", // white
+    100: "#F5F5F5", // light gray
+    200: "#E5E5E5", // medium gray
+    300: "#D4D4D4", // dark gray
+    400: "#A3A3A3", // very dark gray
+    500: "#737373", // black
+    600: "#525252", // very dark gray
+    700: "#404040", // very dark gray
+    800: "#262626", // very dark gray
+    900: "#171717", // very dark gray
+    950: "#0A0A0A", // very dark gray
   },
 
   // Neutral grays
@@ -77,7 +77,10 @@ const themeColors = {
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   safelist: [
-    { pattern: /(from|to)-(indigo|violet|cyan|emerald|purple|pink|rose|orange|teal|blue)-500\/20/ },
+    {
+      pattern:
+        /(from|to)-(indigo|violet|cyan|emerald|purple|pink|rose|orange|teal|blue)-500\/20/,
+    },
     { pattern: /text-(emerald|cyan|violet)-400/ },
   ],
 
@@ -158,13 +161,20 @@ module.exports = {
 
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-mesh": "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
-        "gradient-accent": "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%)",
-        "gradient-hero": "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent), radial-gradient(ellipse 60% 40% at 100% 0%, rgba(139, 92, 246, 0.1), transparent), radial-gradient(ellipse 60% 40% at 0% 0%, rgba(6, 182, 212, 0.08), transparent)",
-        "gradient-dark": "linear-gradient(180deg, #0B0E14 0%, #0F172A 50%, #020617 100%)",
-        "gradient-accent-indigo-cyan": "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
-        "gradient-accent-purple-pink": "linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)",
-        "gradient-accent-emerald-teal": "linear-gradient(135deg, #10b981 0%, #14b8a6 100%)",
+        "gradient-mesh":
+          "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+        "gradient-accent":
+          "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%)",
+        "gradient-hero":
+          "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent), radial-gradient(ellipse 60% 40% at 100% 0%, rgba(139, 92, 246, 0.1), transparent), radial-gradient(ellipse 60% 40% at 0% 0%, rgba(6, 182, 212, 0.08), transparent)",
+        "gradient-dark":
+          "linear-gradient(180deg, #0B0E14 0%, #0F172A 50%, #020617 100%)",
+        "gradient-accent-indigo-cyan":
+          "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+        "gradient-accent-purple-pink":
+          "linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)",
+        "gradient-accent-emerald-teal":
+          "linear-gradient(135deg, #10b981 0%, #14b8a6 100%)",
       },
 
       animation: {
@@ -199,9 +209,18 @@ module.exports = {
 
       // Landing page typography scale (production-ready)
       fontSize: {
-        "landing-hero": ["2.25rem", { lineHeight: "1.15", letterSpacing: "-0.02em" }],
-        "landing-hero-lg": ["3rem", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
-        "landing-hero-xl": ["3.5rem", { lineHeight: "1.08", letterSpacing: "-0.02em" }],
+        "landing-hero": [
+          "2.25rem",
+          { lineHeight: "1.15", letterSpacing: "-0.02em" },
+        ],
+        "landing-hero-lg": [
+          "3rem",
+          { lineHeight: "1.1", letterSpacing: "-0.02em" },
+        ],
+        "landing-hero-xl": [
+          "3.5rem",
+          { lineHeight: "1.08", letterSpacing: "-0.02em" },
+        ],
         "landing-section": ["1.25rem", { lineHeight: "1.3" }],
         "landing-section-lg": ["1.5rem", { lineHeight: "1.25" }],
         "landing-card": ["0.875rem", { lineHeight: "1.4" }],
