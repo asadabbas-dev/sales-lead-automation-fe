@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { StatsOverviewBar } from "@/components/dashboard/stats.overview.bar.component";
 import { FilterBar } from "@/components/dashboard/filter.bar.component";
@@ -11,13 +11,12 @@ import CustomButton from "@/common/components/custom-button/custom-button.compon
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getRuns } from "@/provider/features/runs/runs.slice";
+import { Database } from "lucide-react";
 
 export default function RunsPage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { data, isLoading } = useSelector(
-    (state) => state?.runs?.listRuns || {},
-  );
+  const { isLoading } = useSelector((state) => state?.runs?.listRuns || {});
 
   const [runs, setRuns] = useState([]);
   const [total, setTotal] = useState(0);
@@ -30,10 +29,14 @@ export default function RunsPage() {
   const [selectedRunId, setSelectedRunId] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  useEffect(() => {
+  const fetchRuns = useCallback(() => {
+    // Build server-side query params — filtering happens in the DB, not the client
     const params = {};
     if (statusFilter) params.status = statusFilter;
-    if (qualifiedFilter !== "") params.qualified = qualifiedFilter;
+    if (sourceFilter) params.source = sourceFilter;
+    if (searchQuery) params.search = searchQuery;
+    // NOTE: qualifiedFilter is a result_json field — filtered client-side after fetch
+    // because it's stored inside JSONB. Move to a DB column if perf becomes an issue.
 
     dispatch(
       getRuns({
@@ -41,19 +44,10 @@ export default function RunsPage() {
         successCallBack: (res) => {
           let filteredRuns = res.runs || [];
 
-          if (sourceFilter) {
-            filteredRuns = filteredRuns.filter((r) =>
-              r.source.toLowerCase().includes(sourceFilter.toLowerCase()),
-            );
-          }
-
-          if (searchQuery) {
-            const q = searchQuery.toLowerCase();
+          // Client-side qualified filter (JSONB field — not indexed)
+          if (qualifiedFilter !== "") {
             filteredRuns = filteredRuns.filter(
-              (r) =>
-                r.id.toLowerCase().includes(q) ||
-                r.source.toLowerCase().includes(q) ||
-                (r.error && r.error.toLowerCase().includes(q)),
+              (r) => r.qualified === qualifiedFilter,
             );
           }
 
@@ -62,23 +56,25 @@ export default function RunsPage() {
         },
       }),
     );
-  }, [statusFilter, qualifiedFilter, sourceFilter, searchQuery]);
+  }, [statusFilter, qualifiedFilter, sourceFilter, searchQuery, dispatch]);
 
-  const qualifiedCount = runs.filter((r) => r.qualified === true).length;
-  const failedCount = runs.filter((r) => r.status === "failed").length;
+  useEffect(() => {
+    fetchRuns();
+  }, [fetchRuns]);
+
+  // Derive real stats from fetched data — no random numbers
   const successCount = runs.filter((r) => r.status === "success").length;
-
-  const avgTime = runs.length > 0 ? Math.round(Math.random() * 200 + 100) : 0;
-  const activeAutomations = successCount;
-  const aiCallsToday = total;
+  const failedCount = runs.filter((r) => r.status === "failed").length;
+  const qualifiedCount = runs.filter((r) => r.qualified === true).length;
 
   const stats = {
     total,
     success: successCount,
     failed: failedCount,
-    avgTime,
-    active: activeAutomations,
-    aiCalls: aiCallsToday,
+    qualified: qualifiedCount,
+    // avgTime and aiCalls require backend aggregation — show placeholders
+    avgTime: null,
+    aiCalls: total,
   };
 
   const handleRowClick = (run) => {
@@ -117,12 +113,11 @@ export default function RunsPage() {
 
         <div className="z-1 flex flex-row items-center justify-between">
           <div>
-            <h3 className="text-2xl font-bold text-white">Create Runs</h3>
-            <p className="text-sm text-white">
-              Create runs to process leads through the automation.
+            <h3 className="text-2xl font-bold text-white">Automation Runs</h3>
+            <p className="text-sm text-slate-400">
+              All leads processed through the qualification pipeline.
             </p>
           </div>
-
           <CustomButton
             text="Create Run"
             onClick={() => router.push("/runs/create")}
@@ -137,6 +132,7 @@ export default function RunsPage() {
             description="When leads are processed through the automation, they will appear here."
             actionLabel="Create Run"
             actionHref="/runs/create"
+            icon={<Database className="h-6 w-6" />}
           />
         ) : (
           <RunsDataGrid

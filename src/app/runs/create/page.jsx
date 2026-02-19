@@ -8,28 +8,38 @@ import { useState } from "react";
 import { createRun } from "@/provider/features/runs/runs.slice";
 import SimpleSelect from "@/common/components/dropdowns/simple-select/simple-select";
 import { useSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
+
+const INITIAL_FORM = {
+  workflow: "",
+  source: "web",
+  payload_json: "",
+  result_json: "",
+  status: "pending",
+  priority: "",
+  error: "",
+};
 
 export default function CreateRunPage() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const { isLoading } = useSelector((state) => state?.runs?.createRun || {});
 
-  const [form, setForm] = useState({
-    workflow: "", // NEW required field
-    source: "web",
-    payload_json: "",
-    result_json: "",
-    status: "pending",
-    error: "",
-  });
+  const [form, setForm] = useState(INITIAL_FORM);
 
   const handleChange = (value, name) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = () => {
-    if (!form.workflow) {
-      enqueueSnackbar("Workflow is required", { variant: "error" });
+    if (!form.workflow.trim()) {
+      enqueueSnackbar("Workflow is required.", { variant: "error" });
+      return;
+    }
+
+    if (!form.payload_json.trim()) {
+      enqueueSnackbar("Payload JSON is required.", { variant: "error" });
       return;
     }
 
@@ -37,43 +47,37 @@ export default function CreateRunPage() {
     let resultParsed = null;
 
     try {
-      payloadParsed = JSON.parse(form.payload_json || "{}");
+      payloadParsed = JSON.parse(form.payload_json);
     } catch {
-      enqueueSnackbar("Invalid payload_json JSON", { variant: "error" });
+      enqueueSnackbar("Payload JSON is not valid JSON.", { variant: "error" });
       return;
     }
 
-    if (form.result_json) {
+    if (form.result_json.trim()) {
       try {
         resultParsed = JSON.parse(form.result_json);
       } catch {
-        enqueueSnackbar("Invalid result_json JSON", { variant: "error" });
+        enqueueSnackbar("Result JSON is not valid JSON.", { variant: "error" });
         return;
       }
     }
 
     const payload = {
-      workflow: form.workflow, // <-- send workflow to backend
-      source: form.source,
+      workflow: form.workflow.trim(),
+      source: form.source || "web",
       payload_json: payloadParsed,
       result_json: resultParsed,
       status: form.status,
-      error: form.error || null,
-      idempotency_key: crypto.randomUUID(),
+      priority: form.priority || null,
+      error: form.error.trim() || null,
     };
 
     dispatch(
       createRun({
         payload,
         successCallBack: () => {
-          setForm({
-            workflow: "",
-            source: "web",
-            payload_json: "",
-            result_json: "",
-            status: "pending",
-            error: "",
-          });
+          setForm(INITIAL_FORM);
+          router.push("/runs");
         },
       }),
     );
@@ -86,16 +90,21 @@ export default function CreateRunPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-[#0b0b0b] border border-gray-800 rounded-xl p-8"
+          className="bg-gradient-to-br from-white/10 to-white/5 border border-gray-800 rounded-xl p-8"
         >
-          <h1 className="text-2xl font-semibold text-white mb-6">Create Run</h1>
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold text-white">Create Run</h1>
+            <p className="mt-1 text-sm text-slate-400">
+              Manually trigger an automation run for a lead payload.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <CustomInput
-              label="Workflow"
+              label="Workflow *"
               value={form.workflow}
               onChange={(e) => handleChange(e.target.value, "workflow")}
-              placeholder="Enter workflow name"
+              placeholder="e.g. b2b-qualification"
               required
             />
 
@@ -107,11 +116,11 @@ export default function CreateRunPage() {
             />
 
             <CustomInput
-              label="Payload JSON"
+              label="Payload JSON *"
               value={form.payload_json}
               onChange={(e) => handleChange(e.target.value, "payload_json")}
               textarea
-              placeholder='{"leads":[{"email":"a@b.com"}]}'
+              placeholder='{"email":"john@acme.com","phone":"+1234567890","budget":50000}'
               required
             />
 
@@ -120,30 +129,50 @@ export default function CreateRunPage() {
               value={form.result_json}
               onChange={(e) => handleChange(e.target.value, "result_json")}
               textarea
-              placeholder='{"qualified":true,"score":87}'
+              placeholder='{"qualified":true,"score":87,"reasons":["High budget"]}'
             />
 
             <SimpleSelect
-              options={[
-                { label: "pending", value: "pending" },
-                { label: "success", value: "success" },
-                { label: "failed", value: "failed" },
-              ]}
               label="Status"
+              name="status"
               value={form.status}
               onChange={(value) => handleChange(value, "status")}
-              placeholder="pending / success / failed"
+              options={[
+                { label: "Pending", value: "pending" },
+                { label: "Success", value: "success" },
+                { label: "Failed", value: "failed" },
+              ]}
             />
 
-            <CustomInput
-              label="Error (optional)"
-              value={form.error}
-              onChange={(e) => handleChange(e.target.value, "error")}
-              placeholder="Error message if failed"
+            <SimpleSelect
+              label="Priority (optional)"
+              name="priority"
+              value={form.priority}
+              onChange={(value) => handleChange(value, "priority")}
+              options={[
+                { label: "None", value: "" },
+                { label: "Low", value: "low" },
+                { label: "Medium", value: "medium" },
+                { label: "High", value: "high" },
+              ]}
             />
+
+            <div className="sm:col-span-2">
+              <CustomInput
+                label="Error Message (optional)"
+                value={form.error}
+                onChange={(e) => handleChange(e.target.value, "error")}
+                placeholder="Error detail if status is failed"
+              />
+            </div>
           </div>
 
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end gap-3 pt-6">
+            <CustomButton
+              text="Cancel"
+              variant="ghost"
+              onClick={() => router.push("/runs")}
+            />
             <CustomButton
               text="Create Run"
               onClick={handleSubmit}

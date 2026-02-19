@@ -12,12 +12,9 @@ import {
 import { useEffect } from "react";
 import { useSidebar } from "./sidebar.context";
 
-function AnimatedCounter({ value, duration = 1.5 }) {
+function AnimatedCounter({ value }) {
   const motionValue = useMotionValue(0);
-  const spring = useSpring(motionValue, {
-    damping: 60,
-    stiffness: 100,
-  });
+  const spring = useSpring(motionValue, { damping: 60, stiffness: 100 });
   const display = useTransform(spring, (current) => Math.round(current));
 
   useEffect(() => {
@@ -28,6 +25,16 @@ function AnimatedCounter({ value, duration = 1.5 }) {
 }
 
 function StatCard({ icon: Icon, label, value, delay = 0 }) {
+  // value === null means "not available" — render a dash instead of 0
+  const displayValue =
+    value === null || value === undefined ? (
+      <span className="text-slate-500 text-base font-medium">&mdash;</span>
+    ) : typeof value === "number" ? (
+      <AnimatedCounter value={value} />
+    ) : (
+      value
+    );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -42,13 +49,7 @@ function StatCard({ icon: Icon, label, value, delay = 0 }) {
           </div>
           <p className="text-xs font-medium text-slate-200 truncate">{label}</p>
         </div>
-        <p className="text-xl font-bold text-white shrink-0">
-          {typeof value === "number" ? (
-            <AnimatedCounter value={value} />
-          ) : (
-            value
-          )}
-        </p>
+        <p className="text-xl font-bold text-white shrink-0">{displayValue}</p>
       </div>
     </motion.div>
   );
@@ -59,8 +60,9 @@ export function StatsOverviewBar({ stats }) {
     total = 0,
     success = 0,
     failed = 0,
-    avgTime = 0,
-    active = 0,
+    qualified = 0,
+    // avgTime: null means we don't have this data from the backend yet
+    avgTime = null,
     aiCalls = 0,
   } = stats || {};
 
@@ -84,12 +86,18 @@ export function StatsOverviewBar({ stats }) {
       />
       <StatCard icon={XCircle} label="Failed" value={failed} delay={0.1} />
       <StatCard
-        icon={Clock}
-        label="Avg Time"
-        value={`${avgTime}ms`}
+        icon={CheckCircle2}
+        label="Qualified"
+        value={qualified}
         delay={0.15}
       />
-      <StatCard icon={Zap} label="Active" value={active} delay={0.2} />
+      <StatCard
+        icon={Clock}
+        label="Avg Time"
+        // null renders as — until backend provides real aggregation
+        value={avgTime !== null ? `${avgTime}ms` : null}
+        delay={0.2}
+      />
       <StatCard
         icon={Brain}
         label="AI Calls Today"

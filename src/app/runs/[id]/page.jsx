@@ -22,25 +22,28 @@ export default function RunDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id;
+
   const [run, setRun] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = (useState < string) | (null > null);
+  const [error, setError] = useState(null); // FIX: removed invalid TypeScript syntax (useState < string) | (null > null)
 
   useEffect(() => {
     if (!id) return;
     let cancelled = false;
     setLoading(true);
     setError(null);
+
     fetchRun(id)
       .then((data) => {
         if (!cancelled) setRun(data);
       })
       .catch((err) => {
-        if (!cancelled) setError(err.message);
+        if (!cancelled) setError(err.message || "Failed to load run.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+
     return () => {
       cancelled = true;
     };
@@ -54,7 +57,7 @@ export default function RunDetailPage() {
             href="/runs"
             className="text-sm text-slate-400 hover:text-yellow-400 transition-colors"
           >
-            ← Back to Runs
+            &larr; Back to Runs
           </Link>
         </div>
         <Skeleton className="h-8 w-64" />
@@ -74,7 +77,7 @@ export default function RunDetailPage() {
           href="/runs"
           className="text-sm text-slate-400 hover:text-yellow-400 transition-colors"
         >
-          ← Back to Runs
+          &larr; Back to Runs
         </Link>
         <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-5 py-6 backdrop-blur-sm">
           <h3 className="font-display text-lg font-semibold text-red-300">
@@ -110,15 +113,16 @@ export default function RunDetailPage() {
           href="/runs"
           className="text-sm text-slate-400 hover:text-yellow-400 transition-colors"
         >
-          ← Back to Runs
+          &larr; Back to Runs
         </Link>
       </div>
 
       <PageHeader
         title={`Run ${run.id.slice(0, 8)}...`}
-        subtitle={`${formatTime(run.created_at)} · ${run.source}`}
+        subtitle={`${formatTime(run.created_at)} &middot; ${run.source}`}
       />
 
+      {/* Overview cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
           <p className="text-xs font-medium text-slate-400">Status</p>
@@ -126,34 +130,36 @@ export default function RunDetailPage() {
             <StatusBadge status={run.status} />
           </div>
         </div>
+
         <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
           <p className="text-xs font-medium text-slate-400">Qualified</p>
           <div className="mt-2">
-            {qualified === undefined ? (
-              <span className="text-sm text-slate-500">—</span>
+            {qualified === undefined || qualified === null ? (
+              <span className="text-sm text-slate-500">&mdash;</span>
             ) : (
               <StatusBadge status={qualified ? "qualified" : "unqualified"} />
             )}
           </div>
         </div>
+
         <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
           <p className="text-xs font-medium text-slate-400">Score</p>
           <p className="mt-2 font-display text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            {score ?? "—"}
+            {score ?? <span className="text-slate-500 text-sm">&mdash;</span>}
           </p>
         </div>
+
         <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
           <p className="text-xs font-medium text-slate-400">Source</p>
-          <p className="mt-2 text-sm font-semibold text-white">
-            {run.source}
-          </p>
+          <p className="mt-2 text-sm font-semibold text-white">{run.source}</p>
         </div>
       </div>
 
+      {/* Lead summary */}
       {lead && (
         <div>
           <h3 className="mb-5 font-display text-xl font-semibold text-white">
-            Lead summary
+            Lead Summary
           </h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
@@ -164,34 +170,32 @@ export default function RunDetailPage() {
                 label: "Budget",
                 value:
                   lead.budget != null
-                    ? `$${lead.budget.toLocaleString()}`
+                    ? `$${Number(lead.budget).toLocaleString()}`
                     : null,
               },
               { label: "Intent", value: lead.intent },
               { label: "Urgency", value: lead.urgency },
               { label: "Industry", value: lead.industry },
-            ].map(
-              ({ label, value }) =>
-                value != null && (
-                  <div
-                    key={label}
-                    className="rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm p-4 shadow-[0_0_15px_rgba(255,255,255,0.03)]"
-                  >
-                    <p className="text-xs font-medium text-slate-400">
-                      {label}
-                    </p>
-                    <p className="mt-1 text-sm font-medium text-white">{value}</p>
-                  </div>
-                ),
-            )}
+            ]
+              .filter(({ value }) => value != null)
+              .map(({ label, value }) => (
+                <div
+                  key={label}
+                  className="rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm p-4 shadow-[0_0_15px_rgba(255,255,255,0.03)]"
+                >
+                  <p className="text-xs font-medium text-slate-400">{label}</p>
+                  <p className="mt-1 text-sm font-medium text-white">{value}</p>
+                </div>
+              ))}
           </div>
         </div>
       )}
 
+      {/* Qualification reasons */}
       {reasons.length > 0 && (
         <div>
           <h3 className="mb-5 font-display text-xl font-semibold text-white">
-            Qualification reasons
+            Qualification Reasons
           </h3>
           <ul className="flex flex-wrap gap-2">
             {reasons.map((r, i) => (
@@ -206,6 +210,7 @@ export default function RunDetailPage() {
         </div>
       )}
 
+      {/* Error block */}
       {run.error && (
         <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-5 py-4 backdrop-blur-sm">
           <h3 className="font-display text-sm font-semibold text-red-300">
@@ -217,14 +222,16 @@ export default function RunDetailPage() {
         </div>
       )}
 
-      <CollapsibleSection title="Raw payload" defaultOpen={false}>
+      {/* Raw payload */}
+      <CollapsibleSection title="Raw Payload" defaultOpen={false}>
         <pre className="overflow-x-auto rounded-lg border border-white/10 bg-black/50 p-4 text-xs text-slate-300 font-mono">
           {JSON.stringify(run.payload_json, null, 2)}
         </pre>
       </CollapsibleSection>
 
+      {/* Full result */}
       {run.result_json && (
-        <CollapsibleSection title="Full result" defaultOpen={false}>
+        <CollapsibleSection title="Full AI Result" defaultOpen={false}>
           <pre className="overflow-x-auto rounded-lg border border-white/10 bg-black/50 p-4 text-xs text-slate-300 font-mono">
             {JSON.stringify(run.result_json, null, 2)}
           </pre>

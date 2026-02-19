@@ -30,20 +30,6 @@ export function FilterBar({
       className="mb-4 space-y-3 rounded-lg border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-3 backdrop-blur-md shadow-[0_0_15px_rgba(0,0,0,0.3)]"
     >
       <div className="flex flex-wrap items-end gap-4">
-        {/* Search */}
-        <div className="flex-1 min-w-[200px]">
-          <div className="relative">
-            <CustomInput
-              label="Search"
-              name="search"
-              value={searchQuery || ""}
-              onChange={(e) => onSearchChange?.(e.target.value)}
-              placeholder="Search runs, IDs, sources"
-              startIcon={<Search className="h-4 w-4 text-" />}
-            />
-          </div>
-        </div>
-
         {/* Status Filter */}
         <div className="w-full sm:w-48">
           <SimpleSelect
@@ -95,6 +81,20 @@ export function FilterBar({
             ]}
             placeholder="All"
           />
+        </div>
+
+        {/* Search */}
+        <div className="flex-1 min-w-[200px]">
+          <div className="relative">
+            <CustomInput
+              label="Search"
+              name="search"
+              value={searchQuery || ""}
+              onChange={(e) => onSearchChange?.(e.target.value)}
+              placeholder="Search runs, IDs, sources"
+              startIcon={<Search className="h-4 w-4 text-" />}
+            />
+          </div>
         </div>
       </div>
 

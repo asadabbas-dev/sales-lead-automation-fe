@@ -5,30 +5,6 @@ import CustomInput from "../../custom-input/custom-input.component";
 import FieldLabel from "../../field-label/field-label.component";
 import FieldError from "../../field-error/field-error.component";
 
-/**
- * Dropdown Icon Component
- */
-function DropdownIcon({ isOpen, className = "" }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""} ${className}`}
-    >
-      <path
-        d="M4 6L8 10L12 6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 const SimpleSelect = forwardRef(function SimpleSelect(
   {
     label,
@@ -49,15 +25,15 @@ const SimpleSelect = forwardRef(function SimpleSelect(
     helperText = null,
     inlineLabel = false,
     labelClassName = "",
-    maxHeight = "15rem", // 240px
+    maxHeight = "15rem",
     clearable = false,
     loading = false,
     noOptionsMessage = "No options found",
   },
-  ref,
+  _ref,
 ) {
   const {
-    inputRef,
+    inputRef, // ← this is now wrapperRef from the hook
     handleInputClick,
     getDisplay,
     showMenu,
@@ -79,71 +55,51 @@ const SimpleSelect = forwardRef(function SimpleSelect(
     disabled,
   });
 
-  // Get error state
   const hasError = errors && name && errors[name];
   const errorMessage = hasError ? errors[name].message : null;
 
-  // Get select classes based on new theme system
-  const getSelectClasses = () => {
-    const baseClasses = "form-select";
-
-    // Size classes
-    const sizeClasses = {
-      sm: "text-sm py-2 px-3 h-9",
-      md: "text-sm py-3 px-4 h-11", // default
-      lg: "text-base py-4 px-4 h-12",
-    };
-
-    // Variant classes
-    const variantClasses = {
-      default: "",
-      bordered: "border-2",
-      minimal: "border-0 border-b-2 rounded-none bg-transparent",
-    };
-
-    // State classes
-    const stateClasses = hasError ? "form-input-error" : "";
-    const disabledClasses = disabled
-      ? "opacity-60 cursor-not-allowed"
-      : "cursor-pointer";
-    const focusClasses = showMenu
-      ? "ring-2 ring-white/10 ring-opacity-20 border-white/10"
-      : "";
-
-    return `${baseClasses} ${sizeClasses[size] || sizeClasses.md} ${variantClasses[variant]} ${stateClasses} ${disabledClasses} ${className}`.trim();
+  const sizeClasses = {
+    sm: "text-sm py-2 px-3 h-9",
+    md: "text-sm py-3 px-4 h-11",
+    lg: "text-base py-4 px-4 h-12",
   };
 
-  // Container classes
+  const variantClasses = {
+    default: "",
+    bordered: "border-2",
+    minimal: "border-0 border-b-2 rounded-none bg-transparent",
+  };
+
+  const triggerClasses = [
+    "form-select",
+    sizeClasses[size] ?? sizeClasses.md,
+    variantClasses[variant] ?? "",
+    hasError ? "form-input-error" : "",
+    disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   const containerClasses = inlineLabel
     ? "grid w-full grid-cols-[130px_1fr] items-start gap-4"
     : "form-group";
 
-  // Get dropdown position classes
-  const getDropdownClasses = () => {
-    const baseClasses =
-      "absolute w-full bg-black border border-white/10 rounded-sm shadow-2xl overflow-hidden";
-    const positionClasses = "top-full mt-1";
-
-    return `${baseClasses} ${positionClasses}`;
-  };
-
-  // Handle keyboard navigation
   const handleKeyDown = (e) => {
     if (disabled) return;
-
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleInputClick();
     } else if (e.key === "Escape" && showMenu) {
-      // Close menu on escape
       handleInputClick();
     }
   };
 
-  // Check if we should show placeholder
   const displayValue = getDisplay();
   const isPlaceholder =
-    displayValue === placeholder || displayValue === "Select an option...";
+    !displayValue ||
+    displayValue === placeholder ||
+    displayValue === "Select an option...";
 
   return (
     <div className={containerClasses}>
@@ -155,18 +111,30 @@ const SimpleSelect = forwardRef(function SimpleSelect(
         />
       )}
 
-      <div className="relative w-full z-10">
-        {/* Main Select Input */}
+      {/*
+        FIX: inputRef (which is wrapperRef in the hook) is placed HERE on the
+        outer wrapper that contains BOTH the trigger button and the dropdown
+        menu. This means clicks on menu options are inside the ref boundary,
+        so the outside-click handler in the hook does NOT fire when the user
+        selects an option — the menu stays open long enough for onItemClick
+        to run, then closes normally.
+
+        Previously inputRef was on the trigger <div> only. The dropdown is a
+        sibling of the trigger, so clicking an option was "outside" inputRef
+        and the menu closed before the click could register.
+      -->
+      */}
+      <div ref={inputRef} className="relative w-full">
+        {/* Trigger */}
         <div
-          ref={inputRef}
           onClick={disabled ? undefined : handleInputClick}
           onKeyDown={handleKeyDown}
-          className={getSelectClasses()}
+          className={triggerClasses}
           role="combobox"
           aria-expanded={showMenu}
           aria-haspopup="listbox"
           aria-required={isRequired}
-          aria-invalid={hasError}
+          aria-invalid={!!hasError}
           tabIndex={disabled ? -1 : 0}
         >
           <div className="flex items-center justify-between w-full">
@@ -195,53 +163,52 @@ const SimpleSelect = forwardRef(function SimpleSelect(
                   Loading...
                 </span>
               ) : (
-                <span className={isPlaceholder ? "text-white" : "text-white"}>
-                  {displayValue}
-                </span>
+                <span className="text-white">{displayValue}</span>
               )}
             </div>
 
-            <div className="flex items-center space-x-1">
-              {/* Clear Button */}
-              {clearable && !isPlaceholder && !disabled && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    clearSelection();
-                  }}
-                  className="p-1 hover:bg-white/10 rounded text-white hover:text-white transition-colors"
-                  aria-label="Clear selection"
+            {/* Clear button — only shown when clearable + something selected */}
+            {clearable && !isPlaceholder && !disabled && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearSelection();
+                }}
+                className="p-1 hover:bg-white/10 rounded text-white transition-colors"
+                aria-label="Clear selection"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
 
-              {/* Dropdown Arrow */}
-              {/* <DropdownIcon
-                isOpen={showMenu}
-                className={`w-4 h-4 ${disabled ? "text-neutral-300" : "text-neutral-500"}`}
-              /> */}
-            </div>
+            {/*
+              FIX: No DropdownIcon here.
+              The "form-select" CSS class already renders a native chevron via
+              CSS (background-image SVG arrow). Adding a second icon here was
+              causing the double-chevron. Removed entirely.
+            */}
           </div>
         </div>
 
-        {/* Dropdown Menu */}
+        {/* Dropdown menu */}
         {showMenu && !disabled && (
-          <div className={getDropdownClasses()}>
-            {/* Search Input */}
+          <div
+            className="absolute top-full left-0 mt-1 w-full bg-black border border-white/10 rounded-sm shadow-2xl overflow-hidden"
+            style={{ zIndex: 9999 }}
+          >
             {isSearchable && (
               <div className="p-3 border-b border-white/10 bg-black">
                 <CustomInput
@@ -256,9 +223,8 @@ const SimpleSelect = forwardRef(function SimpleSelect(
               </div>
             )}
 
-            {/* Options List */}
             <div
-              className="overflow-auto z-[999999]"
+              className="overflow-auto"
               style={{ maxHeight }}
               role="listbox"
               aria-multiselectable={isMulti}
@@ -305,7 +271,6 @@ const SimpleSelect = forwardRef(function SimpleSelect(
           </div>
         )}
 
-        {/* Helper text or error message */}
         {(helperText || errorMessage) && (
           <div className="mt-1">
             {errorMessage ? (
@@ -364,13 +329,7 @@ SimpleSelect.propTypes = {
   noOptionsMessage: PropTypes.string,
 };
 
-// Export size and variant constants for easy usage
-export const SELECT_SIZES = {
-  SMALL: "sm",
-  MEDIUM: "md",
-  LARGE: "lg",
-};
-
+export const SELECT_SIZES = { SMALL: "sm", MEDIUM: "md", LARGE: "lg" };
 export const SELECT_VARIANTS = {
   DEFAULT: "default",
   BORDERED: "bordered",

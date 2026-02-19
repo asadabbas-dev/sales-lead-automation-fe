@@ -5,11 +5,11 @@ import { StatusBadge } from "./status.badge.component";
 import {
   ChevronRight,
   Clock,
-  Zap,
   Loader2,
   CheckCircle2,
   XCircle,
 } from "lucide-react";
+import { Pending } from "@mui/icons-material";
 
 function formatTime(iso) {
   try {
@@ -41,41 +41,26 @@ function StatusIndicator({ status }) {
       icon: CheckCircle2,
       color: "text-cyan-400",
       glow: "shadow-[0_0_15px_rgba(59,130,246,0.5)]",
-      pulse: "bg-cyan-400",
     },
     failed: {
       icon: XCircle,
       color: "text-red-400",
       glow: "shadow-[0_0_15px_rgba(239,68,68,0.5)]",
-      pulse: "bg-red-400",
     },
-    processing: {
-      icon: Loader2,
+    pending: {
+      icon: Pending,
       color: "text-blue-400",
       glow: "shadow-[0_0_15px_rgba(59,130,246,0.5)]",
-      pulse: "bg-blue-400",
-      animate: "animate-spin",
-    },
-    queued: {
-      icon: Clock,
-      color: "text-violet-400",
-      glow: "shadow-[0_0_15px_rgba(139,92,246,0.5)]",
-      pulse: "bg-violet-400",
     },
   };
 
-  const config = configs[status] || configs.queued;
+  const config = configs[status] || configs.pending;
   const Icon = config.icon;
 
   return (
-    <div className="relative">
-      <Icon
-        className={`h-4 w-4 ${config.color} ${config.glow} ${config.animate || ""}`}
-      />
-      {status === "processing" && (
-        <div className={`absolute inset-0 animate-ping rounded-full ${config.pulse} opacity-20`} />
-      )}
-    </div>
+    <Icon
+      className={`h-4 w-4 ${config.color} ${config.glow} ${config.animate || ""}`}
+    />
   );
 }
 
@@ -143,11 +128,9 @@ export function RunsDataGrid({ runs, onRowClick, loading }) {
                 className="group cursor-pointer transition-all hover:bg-white/10"
               >
                 <td className="whitespace-nowrap px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <code className="text-xs font-mono text-cyan-400">
-                      {run.id.slice(0, 8)}...
-                    </code>
-                  </div>
+                  <code className="text-xs font-mono text-cyan-400">
+                    {run.id.slice(0, 8)}...
+                  </code>
                 </td>
                 <td className="whitespace-nowrap px-4 py-3">
                   <span className="text-sm font-medium text-white">
@@ -161,8 +144,8 @@ export function RunsDataGrid({ runs, onRowClick, loading }) {
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-4 py-3">
-                  {run.qualified === null ? (
-                    <span className="text-sm text-slate-400">—</span>
+                  {run.qualified === null || run.qualified === undefined ? (
+                    <span className="text-sm text-slate-400">&mdash;</span>
                   ) : (
                     <StatusBadge
                       status={run.qualified ? "qualified" : "unqualified"}
@@ -175,7 +158,7 @@ export function RunsDataGrid({ runs, onRowClick, loading }) {
                       {run.score}
                     </span>
                   ) : (
-                    <span className="text-sm text-slate-400">—</span>
+                    <span className="text-sm text-slate-400">&mdash;</span>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3">
@@ -185,10 +168,7 @@ export function RunsDataGrid({ runs, onRowClick, loading }) {
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-right">
-                  <motion.div
-                    whileHover={{ x: 4 }}
-                    className="inline-flex items-center gap-1 text-sm font-medium text-cyan-400 opacity-0 transition-opacity group-hover:opacity-100"
-                  >
+                  <motion.div className="inline-flex items-center gap-1 text-sm font-medium text-cyan-400">
                     View
                     <ChevronRight className="h-4 w-4" />
                   </motion.div>

@@ -33,7 +33,7 @@ export default function CustomButton({
 }) {
   // Get the theme-based button classes
   const getButtonClasses = () => {
-    const baseClasses = "btn font-dm normal-case";
+    const baseClasses = "btn font-dm normal-case z-10";
 
     // Variant classes using new theme system
     const variantClasses = {
@@ -108,7 +108,14 @@ CustomButton.propTypes = {
   onClick: PropTypes.func,
   className: PropTypes.string,
   type: PropTypes.oneOf(["button", "submit", "reset"]),
-  variant: PropTypes.oneOf(["primary", "secondary", "outline", "danger", "ghost", "cancel"]),
+  variant: PropTypes.oneOf([
+    "primary",
+    "secondary",
+    "outline",
+    "danger",
+    "ghost",
+    "cancel",
+  ]),
   size: PropTypes.oneOf(["sm", "md", "lg"]),
   disabled: PropTypes.bool,
   href: PropTypes.string,
