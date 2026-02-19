@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 
 export function AIRunsHeader() {
-
   return (
     <div className="mb-4 flex items-start justify-between">
       <div>
@@ -13,9 +12,7 @@ export function AIRunsHeader() {
           transition={{ duration: 0.4 }}
           className="mb-1 font-display text-3xl font-bold tracking-tight"
         >
-          <span className="text-white">
-            AI Runs
-          </span>
+          <span className="text-yellow-300">AI Runs</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: -10 }}
@@ -26,7 +23,6 @@ export function AIRunsHeader() {
           System activity, workflows, and AI execution history
         </motion.p>
       </div>
-
     </div>
   );
 }

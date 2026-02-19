@@ -48,7 +48,7 @@ export function DashboardHeader() {
     <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-black/80 backdrop-blur-xl">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold text-white">AI Runs</h1>
+          <h1 className="text-2xl font-bold text-yellow-300">AI Runs</h1>
         </div>
 
         <div className="flex items-center gap-3">

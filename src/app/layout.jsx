@@ -76,7 +76,7 @@ export default function RootLayout({ children }) {
       <body>
         <StyledEngineProvider injectFirst>
           <SnackbarProvider
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             autoHideDuration={3000}
             maxSnack={2}
             Components={{

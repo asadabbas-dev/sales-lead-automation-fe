@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Database, Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Home,
+  Database,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useState } from "react";
 import { useSidebar } from "./sidebar.context";
 
@@ -31,7 +38,11 @@ export function DashboardSidebar() {
         onClick={() => setIsMobileOpen(!isMobileOpen)}
         className="fixed top-4 left-4 z-50 lg:hidden rounded-lg border border-white/10 bg-white/5 p-2 backdrop-blur-sm text-white"
       >
-        {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        {isMobileOpen ? (
+          <X className="h-5 w-5" />
+        ) : (
+          <Menu className="h-5 w-5" />
+        )}
       </button>
 
       {/* Mobile overlay */}
@@ -45,10 +56,10 @@ export function DashboardSidebar() {
       {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 bg-black/95 backdrop-blur-xl border-r border-white/10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-          isMobileOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0"
-        } ${
-          isCollapsed ? "lg:w-20" : "lg:w-64"
-        }`}
+          isMobileOpen
+            ? "translate-x-0 w-64"
+            : "-translate-x-full lg:translate-x-0"
+        } ${isCollapsed ? "lg:w-20" : "lg:w-64"}`}
       >
         <div className="flex h-full flex-col">
           {/* Logo/Brand */}
@@ -83,7 +94,9 @@ export function DashboardSidebar() {
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
+              const isActive =
+                pathname === item.href ||
+                (item.href !== "/" && pathname?.startsWith(item.href));
 
               return (
                 <Link
@@ -92,8 +105,8 @@ export function DashboardSidebar() {
                   onClick={() => setIsMobileOpen(false)}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-white/10 text-yellow-400"
-                      : "text-slate-400 hover:bg-white/5 hover:text-slate-300 hover:no-underline"
+                      ? "bg-white/10 text-yellow-400 hover:text-yellow-400"
+                      : "text-white hover:text-white hover:no-underline"
                   } ${isCollapsed ? "justify-center" : ""}`}
                   title={isCollapsed ? item.label : undefined}
                 >

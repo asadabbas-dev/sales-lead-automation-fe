@@ -113,8 +113,10 @@ export default function RunsPage() {
 
         <div className="z-1 flex flex-row items-center justify-between">
           <div>
-            <h3 className="text-2xl font-bold text-white">Automation Runs</h3>
-            <p className="text-sm text-slate-400">
+            <h3 className="text-2xl font-bold text-yellow-300">
+              Automation Runs
+            </h3>
+            <p className="text-sm text-white">
               All leads processed through the qualification pipeline.
             </p>
           </div>

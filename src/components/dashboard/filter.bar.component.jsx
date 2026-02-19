@@ -101,6 +101,8 @@ export function FilterBar({
       {/* Quick Toggles */}
       <div className="flex justify-between items-center">
         <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-3">
+          {/* Quick Filters label */}
+          <p className="text-xs font-medium text-yellow-300">Quick Filters</p>
           <button
             className={`rounded-md border px-3 py-1 text-xs font-medium transition-colors ${
               statusFilter === "failed"
