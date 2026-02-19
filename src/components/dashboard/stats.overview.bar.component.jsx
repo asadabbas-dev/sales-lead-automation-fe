@@ -45,9 +45,9 @@ function StatCard({ icon: Icon, label, value, delay = 0 }) {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10">
-            <Icon className="h-4 w-4 text-cyan-400" />
+            <Icon className="h-4 w-4 text-yellow-300" />
           </div>
-          <p className="text-xs font-medium text-slate-200 truncate">{label}</p>
+          <p className="text-xs font-medium text-white truncate">{label}</p>
         </div>
         <p className="text-xl font-bold text-white shrink-0">{displayValue}</p>
       </div>
