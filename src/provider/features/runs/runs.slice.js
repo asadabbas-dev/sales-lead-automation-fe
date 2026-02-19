@@ -12,6 +12,7 @@ const generalState = {
 const initialState = {
   listRuns: generalState,
   createRun: generalState,
+  runDetail: generalState,
 };
 
 /* ================= GET RUNS ================= */
@@ -52,6 +53,21 @@ export const createRun = createAsyncThunk(
   },
 );
 
+// ================= GET RUN =================
+export const getRun = createAsyncThunk(
+  "runs/getRun",
+  async ({ id }, thunkAPI) => {
+    try {
+      const response = await runsService.getRun(id);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || { message: error.message },
+      );
+    }
+  },
+);
+
 const runsSlice = createSlice({
   name: "runs",
   initialState,
@@ -59,6 +75,7 @@ const runsSlice = createSlice({
     resetRuns: (state) => {
       state.listRuns = generalState;
       state.createRun = generalState;
+      state.runDetail = generalState;
     },
   },
   extraReducers: (builder) => {
@@ -95,6 +112,23 @@ const runsSlice = createSlice({
         state.createRun.isError = true;
         state.createRun.message =
           action.payload?.message || "Create run failed";
+      })
+      /* -------- GET RUN -------- */
+      .addCase(getRun.pending, (state) => {
+        state.runDetail.isLoading = true;
+        state.runDetail.isError = false;
+        state.runDetail.isSuccess = false;
+      })
+      .addCase(getRun.fulfilled, (state, action) => {
+        state.runDetail.isLoading = false;
+        state.runDetail.isSuccess = true;
+        state.runDetail.data = action.payload;
+      })
+      .addCase(getRun.rejected, (state, action) => {
+        state.runDetail.isLoading = false;
+        state.runDetail.isError = true;
+        state.runDetail.message =
+          action.payload?.message || "Failed to fetch run";
       });
   },
 });

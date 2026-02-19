@@ -10,9 +10,15 @@ const createRun = async (payload) => {
   return response.data;
 };
 
+const getRun = async (id) => {
+  const response = await api().get(`/runs/${id}`);
+  return response.data;
+};
+
 const runsService = {
   getRuns,
   createRun,
+  getRun,
 };
 
 export default runsService;

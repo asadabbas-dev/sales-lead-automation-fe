@@ -4,8 +4,8 @@ import axios from "axios";
 import { enqueueSnackbar } from "notistack";
 import { getAccessToken } from "./access-token.util";
 import { delay } from "./generic.util";
-import { removeUser } from "./users.util";
 import { getSessionId } from "./session";
+import { removeUser } from "./users.util";
 
 const api = (headers = null) => {
   const accessToken = getAccessToken();
@@ -48,10 +48,14 @@ const api = (headers = null) => {
         (method === "get" && endpoint === "generate-otp") ||
         (["post", "put", "delete"].includes(method) &&
           !["get", "get-all"].includes(endpoint) &&
-          !["/upload/single", "/upload/multiple"].includes(response.config.url));
+          !["/upload/single", "/upload/multiple"].includes(
+            response.config.url,
+          ));
 
       if (isSuccessResponse) {
-        enqueueSnackbar(response.data?.message || "Success", { variant: "success" });
+        enqueueSnackbar(response.data?.message || "Success", {
+          variant: "success",
+        });
         await delay(700);
       }
 
@@ -65,7 +69,8 @@ const api = (headers = null) => {
       }
 
       const status = error.response?.status;
-      const message = error.response?.data?.message || error.message || error.toString();
+      const message =
+        error.response?.data?.message || error.message || error.toString();
 
       // Handle unauthorized
       if (status === 401 && typeof window !== "undefined") {
@@ -91,34 +96,10 @@ const api = (headers = null) => {
       }
 
       return Promise.reject(error); // Reject instead of returning raw response
-    }
+    },
   );
 
   return apiInstance;
 };
 
 export default api;
-
-// Runs API functions
-const RUNS_API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-export async function fetchRuns(params = {}) {
-  const search = new URLSearchParams();
-  if (params?.status) search.set("status", params.status);
-  if (params?.qualified !== undefined) search.set("qualified", String(params.qualified));
-  if (params?.limit) search.set("limit", String(params.limit));
-  if (params?.offset) search.set("offset", String(params.offset));
-  const url = `${RUNS_API_BASE}/runs${search.toString() ? `?${search}` : ""}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch runs: ${res.status}`);
-  return res.json();
-}
-
-export async function fetchRun(id) {
-  const res = await fetch(`${RUNS_API_BASE}/runs/${id}`);
-  if (!res.ok) {
-    if (res.status === 404) throw new Error("Run not found");
-    throw new Error(`Failed to fetch run: ${res.status}`);
-  }
-  return res.json();
-}

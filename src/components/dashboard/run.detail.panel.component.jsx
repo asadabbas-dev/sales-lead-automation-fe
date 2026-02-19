@@ -1,28 +1,31 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Download, CheckCircle2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { getRun, resetRuns } from "@/provider/features/runs/runs.slice";
+import { AnimatePresence, motion } from "framer-motion";
+import { CheckCircle2, Copy, Download, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { StatusBadge } from "./status.badge.component";
-import { fetchRun } from "@/common/utils/api";
 
 export function RunDetailPanel({ runId, isOpen, onClose }) {
-  const [run, setRun] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("raw");
   const [copied, setCopied] = useState(false);
-  const [fetchError, setFetchError] = useState(null);
+  const dispatch = useDispatch();
+
+  const {
+    data: runDetail,
+    isLoading,
+    isError,
+    message,
+  } = useSelector((state) => state.runs.runDetail);
+
+  // if (!runDetail) return null;
 
   useEffect(() => {
     if (isOpen && runId) {
-      setLoading(true);
-      setFetchError(null);
-      fetchRun(runId)
-        .then(setRun)
-        .catch((err) => setFetchError(err.message || "Failed to load run."))
-        .finally(() => setLoading(false));
+      dispatch(getRun({ id: runId }));
     }
-  }, [isOpen, runId]);
+  }, [isOpen, runId, dispatch]);
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
@@ -31,23 +34,23 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
   };
 
   const getTabData = () => {
-    if (!run) return {};
+    if (!runDetail) return {};
     switch (activeTab) {
       case "raw":
-        return run.payload_json;
+        return runDetail.payload_json;
       case "parsed":
-        return run.result_json?.lead || {};
+        return runDetail.result_json?.lead || {};
       case "ai":
-        return run.result_json || {};
+        return runDetail.result_json || {};
       case "metadata":
         return {
-          id: run.id,
-          source: run.source,
-          status: run.status,
-          priority: run.priority || null,
-          idempotency_key: run.idempotency_key || null,
-          created_at: run.created_at,
-          error: run.error || null,
+          id: runDetail.id,
+          source: runDetail.source,
+          status: runDetail.status,
+          priority: runDetail.priority || null,
+          idempotency_key: runDetail.idempotency_key || null,
+          created_at: runDetail.created_at,
+          error: runDetail.error || null,
         };
       default:
         return {};
@@ -82,8 +85,10 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-white">Run Details</h2>
-                  {run && (
-                    <code className="mt-1 text-xs text-cyan-400">{run.id}</code>
+                  {runDetail && (
+                    <code className="mt-1 text-xs text-cyan-400">
+                      {runDetail.id}
+                    </code>
                   )}
                 </div>
                 <button
@@ -96,15 +101,15 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
             </div>
 
             <div className="p-6">
-              {loading ? (
+              {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="h-8 w-8 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
                 </div>
-              ) : fetchError ? (
+              ) : isError ? (
                 <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
-                  {fetchError}
+                  {message}
                 </div>
-              ) : run ? (
+              ) : runDetail ? (
                 <div className="space-y-6">
                   {/* Status + Qualified */}
                   <div className="grid grid-cols-2 gap-4">
@@ -113,7 +118,7 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                         Status
                       </p>
                       <div className="mt-2">
-                        <StatusBadge status={run.status} />
+                        <StatusBadge status={runDetail.status} />
                       </div>
                     </div>
                     <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
@@ -121,10 +126,10 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                         Qualified
                       </p>
                       <div className="mt-2">
-                        {run.result_json?.qualified !== undefined ? (
+                        {runDetail.result_json?.qualified !== undefined ? (
                           <StatusBadge
                             status={
-                              run.result_json.qualified
+                              runDetail.result_json.qualified
                                 ? "qualified"
                                 : "unqualified"
                             }
@@ -140,13 +145,13 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
 
                   {/* Metadata row */}
                   <div className="grid grid-cols-2 gap-4">
-                    {run.priority && (
+                    {runDetail.priority && (
                       <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
                         <p className="text-xs font-medium text-slate-400">
                           Priority
                         </p>
                         <p className="mt-1 text-sm font-semibold capitalize text-white">
-                          {run.priority}
+                          {runDetail.priority}
                         </p>
                       </div>
                     )}
@@ -155,13 +160,13 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                         Source
                       </p>
                       <p className="mt-1 text-sm font-semibold text-white">
-                        {run.source}
+                        {runDetail.source}
                       </p>
                     </div>
                   </div>
 
                   {/* AI Decision */}
-                  {run.result_json && (
+                  {runDetail.result_json && (
                     <div className="rounded-xl border border-white/10 bg-gradient-to-br from-cyan-500/10 to-violet-500/10 p-6 backdrop-blur-sm">
                       <h3 className="mb-4 text-sm font-semibold text-white">
                         AI Decision
@@ -172,30 +177,32 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                             Score
                           </p>
                           <p className="mt-1 text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                            {run.result_json.score ?? "&mdash;"}
+                            {runDetail.result_json.score ?? "&mdash;"}
                           </p>
                         </div>
-                        {run.result_json.reasons?.length > 0 && (
+                        {runDetail.result_json.reasons?.length > 0 && (
                           <div>
                             <p className="mb-2 text-xs font-medium text-slate-400">
                               Reasons
                             </p>
                             <div className="flex flex-wrap gap-2">
-                              {run.result_json.reasons.map((reason, i) => (
-                                <span
-                                  key={i}
-                                  className="rounded-md border border-cyan-500/30 bg-cyan-500/20 px-2 py-1 text-xs text-cyan-300"
-                                >
-                                  {reason}
-                                </span>
-                              ))}
+                              {runDetail.result_json.reasons.map(
+                                (reason, i) => (
+                                  <span
+                                    key={i}
+                                    className="rounded-md border border-cyan-500/30 bg-cyan-500/20 px-2 py-1 text-xs text-cyan-300"
+                                  >
+                                    {reason}
+                                  </span>
+                                ),
+                              )}
                             </div>
                           </div>
                         )}
                         {/* Lead fields */}
-                        {run.result_json.lead && (
+                        {runDetail.result_json.lead && (
                           <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10">
-                            {Object.entries(run.result_json.lead)
+                            {Object.entries(runDetail.result_json.lead)
                               .filter(([, v]) => v != null)
                               .map(([key, value]) => (
                                 <div key={key}>
@@ -217,13 +224,13 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                   )}
 
                   {/* Error block */}
-                  {run.error && (
+                  {runDetail.error && (
                     <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4">
                       <p className="text-xs font-medium text-red-400 mb-1">
                         Error
                       </p>
                       <p className="font-mono text-xs text-red-200 whitespace-pre-wrap">
-                        {run.error}
+                        {runDetail.error}
                       </p>
                     </div>
                   )}
@@ -283,7 +290,9 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                   {/* Actions */}
                   <div className="flex gap-3">
                     <button
-                      onClick={() => handleCopy(JSON.stringify(run, null, 2))}
+                      onClick={() =>
+                        handleCopy(JSON.stringify(runDetail, null, 2))
+                      }
                       className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
                     >
                       <Download className="h-4 w-4" />

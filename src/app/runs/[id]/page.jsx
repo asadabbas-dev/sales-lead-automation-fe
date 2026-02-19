@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import CustomButton from "@/common/components/custom-button/custom-button.component";
-import { PageHeader } from "@/components/dashboard/page.header.component";
-import { StatusBadge } from "@/components/dashboard/status.badge.component";
 import { CollapsibleSection } from "@/components/dashboard/collapsible.section.component";
+import { PageHeader } from "@/components/dashboard/page.header.component";
 import { Skeleton } from "@/components/dashboard/skeleton.component";
-import { fetchRun } from "@/common/utils/api";
+import { StatusBadge } from "@/components/dashboard/status.badge.component";
+import { getRun, resetRuns } from "@/provider/features/runs/runs.slice";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 function formatTime(iso) {
   try {
@@ -22,34 +23,20 @@ export default function RunDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id;
-
-  const [run, setRun] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // FIX: removed invalid TypeScript syntax (useState < string) | (null > null)
+  const dispatch = useDispatch();
+  const { run, isLoading, isError, message } = useSelector(
+    (state) => state.runDetail,
+  );
 
   useEffect(() => {
-    if (!id) return;
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
+    if (id) {
+      dispatch(getRun({ id: id }));
+    }
 
-    fetchRun(id)
-      .then((data) => {
-        if (!cancelled) setRun(data);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err.message || "Failed to load run.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    if (!id) dispatch(resetRuns());
+  }, [id, dispatch]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -70,7 +57,7 @@ export default function RunDetailPage() {
     );
   }
 
-  if (error || !run) {
+  if (isError || !run) {
     return (
       <div className="space-y-6">
         <Link
@@ -84,7 +71,9 @@ export default function RunDetailPage() {
             Run not found
           </h3>
           <p className="mt-2 text-sm text-red-200">
-            {error || "This run may have been deleted or the ID is invalid."}
+            {isError
+              ? message
+              : "This run may have been deleted or the ID is invalid."}
           </p>
           <p className="mt-4 text-sm text-red-300/80">
             Go back to the runs list to inspect other runs.

@@ -7,7 +7,7 @@ import runsReducer from "./features/runs/runs.slice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"],
+  whitelist: ["auth", "runs"],
 };
 
 const rootReducer = combineReducers({
