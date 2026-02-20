@@ -167,8 +167,8 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
 
                   {/* AI Decision */}
                   {runDetail.result_json && (
-                    <div className="rounded-xl border border-white/10 bg-gradient-to-br from-cyan-500/10 to-violet-500/10 p-6 backdrop-blur-sm">
-                      <h3 className="mb-4 text-sm font-semibold text-white">
+                    <div className="rounded-xl border border-white/10 bg-gradient-to-br from-yellow-300/10 to-violet-500/10 p-6 backdrop-blur-sm">
+                      <h3 className="mb-4 text-sm font-semibold text-yellow-300">
                         AI Decision
                       </h3>
                       <div className="space-y-4">
@@ -190,7 +190,7 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                                 (reason, i) => (
                                   <span
                                     key={i}
-                                    className="rounded-md border border-cyan-500/30 bg-cyan-500/20 px-2 py-1 text-xs text-cyan-300"
+                                    className="rounded-md border border-yellow-300/30 bg-yellow-300/20 px-2 py-1 text-xs text-yellow-300"
                                   >
                                     {reason}
                                   </span>
@@ -206,7 +206,7 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                               .filter(([, v]) => v != null)
                               .map(([key, value]) => (
                                 <div key={key}>
-                                  <p className="text-xs font-medium capitalize text-slate-400">
+                                  <p className="text-xs font-medium capitalize text-yellow-300">
                                     {key}
                                   </p>
                                   <p className="mt-0.5 text-sm text-white">

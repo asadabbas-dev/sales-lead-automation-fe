@@ -4,28 +4,26 @@ const statusConfig = {
   success: {
     bg: "bg-yellow-300",
     text: "text-black",
+    border: "border-yellow-300/30",
     label: "Success",
-    glow: "shadow-[0_0_15px_rgba(59,130,246,0.4)]",
   },
   failed: {
     bg: "bg-red-500/20",
     text: "text-red-300",
     border: "border-red-500/30",
     label: "Failed",
-    glow: "shadow-[0_0_15px_rgba(239,68,68,0.4)]",
   },
   qualified: {
     bg: "bg-yellow-300",
     text: "text-black",
+    border: "border-yellow-300/30",
     label: "Qualified",
-    glow: "shadow-[0_0_15px_rgba(59,130,246,0.4)]",
   },
   unqualified: {
-    bg: "bg-slate-500/20",
-    text: "text-slate-300",
+    bg: "bg-red-500/20",
+    text: "text-red-300",
     border: "border-slate-500/30",
     label: "Unqualified",
-    glow: "",
   },
 };
 

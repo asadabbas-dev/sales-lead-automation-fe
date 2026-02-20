@@ -337,6 +337,7 @@ export default function CreateRunPage() {
               <CustomInput
                 label="Budget (USD)"
                 value={form.budget}
+                type="number"
                 onChange={set("budget")}
                 placeholder="50000"
               />
