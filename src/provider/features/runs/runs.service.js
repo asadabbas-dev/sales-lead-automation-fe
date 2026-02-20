@@ -15,10 +15,16 @@ const getRun = async (id) => {
   return response.data;
 };
 
+const enrichLead = async (payload) => {
+  const response = await api().post("/enrich-lead", payload);
+  return response.data;
+};
+
 const runsService = {
   getRuns,
   createRun,
   getRun,
+  enrichLead,
 };
 
 export default runsService;

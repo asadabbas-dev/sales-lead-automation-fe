@@ -2,9 +2,8 @@ import React from "react";
 
 const statusConfig = {
   success: {
-    bg: "bg-cyan-500/20",
-    text: "text-cyan-300",
-    border: "border-cyan-500/30",
+    bg: "bg-yellow-300",
+    text: "text-black",
     label: "Success",
     glow: "shadow-[0_0_15px_rgba(59,130,246,0.4)]",
   },
@@ -16,9 +15,8 @@ const statusConfig = {
     glow: "shadow-[0_0_15px_rgba(239,68,68,0.4)]",
   },
   qualified: {
-    bg: "bg-cyan-500/20",
-    text: "text-cyan-300",
-    border: "border-cyan-500/30",
+    bg: "bg-yellow-300",
+    text: "text-black",
     label: "Qualified",
     glow: "shadow-[0_0_15px_rgba(59,130,246,0.4)]",
   },

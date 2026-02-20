@@ -68,6 +68,29 @@ export const getRun = createAsyncThunk(
   },
 );
 
+/**
+ * NEW: enrichLead
+ * Calls POST /enrich-lead with the raw lead payload.
+ * The backend runs the AI, saves the run (status: success/failed),
+ * and returns { qualified, score, reasons, lead }.
+ */
+export const enrichLead = createAsyncThunk(
+  "runs/enrichLead",
+  async (
+    { payload, successCallBack, errorCallBack } = {},
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await runsService.enrichLead(payload);
+      successCallBack?.(response);
+      return response;
+    } catch (error) {
+      errorCallBack?.(error);
+      return rejectWithValue(error);
+    }
+  },
+);
+
 const runsSlice = createSlice({
   name: "runs",
   initialState,
@@ -76,6 +99,7 @@ const runsSlice = createSlice({
       state.listRuns = generalState;
       state.createRun = generalState;
       state.runDetail = generalState;
+      state.enrichLead = generalState;
     },
   },
   extraReducers: (builder) => {
@@ -129,6 +153,23 @@ const runsSlice = createSlice({
         state.runDetail.isError = true;
         state.runDetail.message =
           action.payload?.message || "Failed to fetch run";
+      })
+      /* -------- ENLIVEN LEAD -------- */
+      .addCase(enrichLead.pending, (state) => {
+        state.enrichLead.isLoading = true;
+        state.enrichLead.isError = false;
+        state.enrichLead.isSuccess = false;
+      })
+      .addCase(enrichLead.fulfilled, (state, action) => {
+        state.enrichLead.isLoading = false;
+        state.enrichLead.isSuccess = true;
+        state.enrichLead.data = action.payload;
+      })
+      .addCase(enrichLead.rejected, (state, action) => {
+        state.enrichLead.isLoading = false;
+        state.enrichLead.isError = true;
+        state.enrichLead.message =
+          action.payload?.message || "Failed to enrich lead";
       });
   },
 });
