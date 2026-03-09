@@ -20,11 +20,17 @@ const enrichLead = async (payload) => {
   return response.data;
 };
 
+const getRunsSummary = async () => {
+  const response = await api().get("/metrics/runs-summary");
+  return response.data;
+};
+
 const runsService = {
   getRuns,
   createRun,
   getRun,
   enrichLead,
+  getRunsSummary,
 };
 
 export default runsService;

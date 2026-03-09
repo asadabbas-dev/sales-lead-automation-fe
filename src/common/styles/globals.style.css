@@ -152,15 +152,16 @@
   }
 
   .form-input {
-    @apply block w-full px-3 py-2 border border-black rounded-md 
-           text-white placeholder-text-tertiary bg-black
-           focus:border-primary-500 focus:ring-1 focus:ring-primary-500
-           disabled:bg-background-tertiary disabled:text-text-tertiary
+    @apply block w-full px-3 py-2 rounded-lg
+           text-white placeholder-text-tertiary bg-black/40
+           border border-white/30
+           focus:border-yellow-300 focus:ring-1 focus:ring-yellow-300/40 focus:outline-none
+           disabled:bg-white/5 disabled:text-white/50
            disabled:cursor-not-allowed transition-colors duration-200;
   }
 
   .form-input-error {
-    @apply border-danger-500 focus:border-danger-500 focus:ring-danger-500;
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500/40;
   }
 
   .form-textarea {

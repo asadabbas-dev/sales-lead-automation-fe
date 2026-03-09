@@ -1,37 +1,33 @@
 import PropTypes from "prop-types";
-import { forwardRef } from "react";
 import useSimpleSelect from "./use-simple-select";
 import CustomInput from "../../custom-input/custom-input.component";
 import FieldLabel from "../../field-label/field-label.component";
 import FieldError from "../../field-error/field-error.component";
 
-const SimpleSelect = forwardRef(function SimpleSelect(
-  {
-    label,
-    placeholder = "Select an option...",
-    options = [],
-    isMulti = false,
-    isSearchable = false,
-    onChange,
-    defaultValue,
-    value,
-    className = "",
-    disabled = false,
-    isRequired = false,
-    errors = null,
-    name,
-    size = "md",
-    variant = "default",
-    helperText = null,
-    inlineLabel = false,
-    labelClassName = "",
-    maxHeight = "15rem",
-    clearable = false,
-    loading = false,
-    noOptionsMessage = "No options found",
-  },
-  _ref,
-) {
+export default function SimpleSelect({
+  label,
+  placeholder = "Select an option",
+  options = [],
+  isMulti = false,
+  isSearchable = false,
+  onChange,
+  defaultValue,
+  value,
+  className = "",
+  disabled = false,
+  isRequired = false,
+  errors = null,
+  name,
+  size = "md",
+  variant = "default",
+  helperText = null,
+  inlineLabel = false,
+  labelClassName = "",
+  maxHeight = "15rem",
+  clearable = false,
+  loading = false,
+  noOptionsMessage = "No options found",
+}) {
   const {
     inputRef, // ← this is now wrapperRef from the hook
     handleInputClick,
@@ -72,6 +68,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
 
   const triggerClasses = [
     "form-select",
+    "focus:border-white/30 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
     sizeClasses[size] ?? sizeClasses.md,
     variantClasses[variant] ?? "",
     hasError ? "form-input-error" : "",
@@ -124,7 +121,11 @@ const SimpleSelect = forwardRef(function SimpleSelect(
         and the menu closed before the click could register.
       -->
       */}
-      <div ref={inputRef} className="relative w-full">
+      <div
+        ref={inputRef}
+        className="relative w-full"
+        style={showMenu ? { zIndex: 10050 } : undefined}
+      >
         {/* Trigger */}
         <div
           onClick={disabled ? undefined : handleInputClick}
@@ -206,11 +207,10 @@ const SimpleSelect = forwardRef(function SimpleSelect(
         {/* Dropdown menu */}
         {showMenu && !disabled && (
           <div
-            className="absolute top-full left-0 mt-1 w-full bg-black border border-white/10 rounded-sm shadow-2xl overflow-hidden"
-            style={{ zIndex: 9999 }}
+            className="absolute top-full left-0 mt-1 w-full bg-black/95 border border-white/30 rounded-lg shadow-2xl overflow-hidden backdrop-blur-sm z-[10051]"
           >
             {isSearchable && (
-              <div className="p-3 border-b border-white/10 bg-black">
+              <div className="p-3 border-b border-white/20 bg-black/95">
                 <CustomInput
                   ref={searchRef}
                   name="search"
@@ -218,7 +218,6 @@ const SimpleSelect = forwardRef(function SimpleSelect(
                   value={searchValue}
                   placeholder="Search options..."
                   size="sm"
-                  className="border-white/10"
                 />
               </div>
             )}
@@ -283,7 +282,7 @@ const SimpleSelect = forwardRef(function SimpleSelect(
       </div>
     </div>
   );
-});
+}
 
 SimpleSelect.propTypes = {
   label: PropTypes.string,
@@ -335,5 +334,3 @@ export const SELECT_VARIANTS = {
   BORDERED: "bordered",
   MINIMAL: "minimal",
 };
-
-export default SimpleSelect;

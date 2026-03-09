@@ -1,9 +1,9 @@
 "use client";
 
-import { DashboardSidebar } from "@/components/dashboard/dashboard.sidebar.component";
-import { DashboardHeader } from "@/components/dashboard/dashboard.header.component";
-import { AnimatedBackground } from "@/components/dashboard/animated.background.component";
-import { SidebarProvider, useSidebar } from "@/components/dashboard/sidebar.context";
+import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar/dashboard-sidebar.component";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header/dashboard-header.component";
+import { AnimatedBackground } from "@/components/dashboard/animated-background/animated-background.component";
+import { SidebarProvider, useSidebar } from "@/components/dashboard/sidebar-context/sidebar-context.component";
 
 function LayoutContent({ children }) {
   const { isCollapsed } = useSidebar();

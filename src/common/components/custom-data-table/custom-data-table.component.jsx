@@ -1,9 +1,9 @@
 "use client";
 
-import ThreedotIcon from "@/common/icons/threedot.icon";
 import PropTypes from "prop-types";
 import React from "react";
 import { useCustomDataTable } from "./use-custom-data-table.hook";
+import { MoreVert } from "@mui/icons-material";
 
 const CustomDataTable = ({
   // Core data props
@@ -56,6 +56,7 @@ const CustomDataTable = ({
   showHeader = true,
   emptyMessage = "No data found",
   height,
+  onRowClick,
 }) => {
   const {
     paginatedData,
@@ -123,7 +124,7 @@ const CustomDataTable = ({
 
     // Handle null/undefined values
     if (value === null || value === undefined) {
-      return <span className="text-gray-400">---</span>;
+      return <span className="text-white/50">—</span>;
     }
 
     // Handle different data types
@@ -134,9 +135,9 @@ const CustomDataTable = ({
     if (typeof value === "object") {
       // If it's an object, try to render it as JSON or return a placeholder
       try {
-        return <span className="text-gray-400 text-xs">Object</span>;
+        return <span className="text-white/50 text-xs">Object</span>;
       } catch (e) {
-        return <span className="text-gray-400">---</span>;
+        return <span className="text-white/50">—</span>;
       }
     }
 
@@ -152,18 +153,18 @@ const CustomDataTable = ({
     const isAsc = sortConfig.direction === "asc";
 
     return (
-      <svg width="9" height="15" viewBox="0 0 9 15" className="ml-1">
+      <svg width="9" height="15" viewBox="0 0 9 15" className="ml-1 shrink-0">
         <path
           fillRule="evenodd"
           clipRule="evenodd"
           d="M0 6.3326L4.03846 0.499268L8.07692 6.3326H0Z"
-          fill={isActive && isAsc ? "#000" : "#BDBDBD"}
+          fill={isActive && isAsc ? "rgb(253 224 71)" : "rgba(255,255,255,0.5)"}
         />
         <path
           fillRule="evenodd"
           clipRule="evenodd"
           d="M0 8.66724L4.03846 14.5006L8.07692 8.66724H0Z"
-          fill={isActive && !isAsc ? "#000" : "#BDBDBD"}
+          fill={isActive && !isAsc ? "rgb(253 224 71)" : "rgba(255,255,255,0.5)"}
         />
       </svg>
     );
@@ -171,18 +172,21 @@ const CustomDataTable = ({
 
   const calculateColSpan = () => {
     return (
-      columns.length + (selectable ? 1 : 0) + (statusField ? 1 : 0) + (actions.length > 0 ? 1 : 0)
+      columns.length +
+      (selectable ? 1 : 0) +
+      (statusField ? 1 : 0) +
+      (actions.length > 0 ? 1 : 0)
     );
   };
 
   return (
-    <div className={`bg-white ${className}`}>
+    <div className={`bg-black/40 border border-white/10 rounded-lg ${className}`}>
       {/* Table */}
       <div className="w-full overflow-x-auto relative" style={{ height }}>
         <table className={`w-full ${tableClassName}`}>
           {/* Header */}
           {showHeader && (
-            <thead className={`z-10 bg-gray-50 border-b ${headerClassName}`}>
+            <thead className={`z-10 bg-white/5 border-b border-white/10 ${headerClassName}`}>
               <tr>
                 {/* Selection checkbox */}
                 {selectable && (
@@ -194,17 +198,22 @@ const CustomDataTable = ({
                         if (el) el.indeterminate = isIndeterminate;
                       }}
                       onChange={(e) => handleSelectAll(e.target.checked)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-white/30 bg-black/40 text-yellow-300 focus:ring-yellow-300/50 focus:ring-offset-0"
                     />
                   </th>
                 )}
 
                 {/* Column headers */}
                 {columns.map((column, index) => (
-                  <th key={index} className="px-4 py-3 text-left text-sm font-medium text-gray-900">
+                  <th
+                    key={index}
+                    className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white/80"
+                  >
                     <div
                       className={`flex items-center whitespace-nowrap ${
-                        column.sortable ? "cursor-pointer hover:text-gray-700" : ""
+                        column.sortable
+                          ? "cursor-pointer hover:text-yellow-300"
+                          : ""
                       }`}
                       onClick={() => column.sortable && handleSort(column.key)}
                     >
@@ -216,46 +225,81 @@ const CustomDataTable = ({
 
                 {/* Status column */}
                 {statusField && (
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white/80">
+                    Status
+                  </th>
                 )}
 
                 {/* Actions column */}
                 {actions.length > 0 && (
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white/80">
+                    Actions
+                  </th>
                 )}
               </tr>
             </thead>
           )}
 
           {/* Body */}
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-white/10">
             {loading ? (
               <tr>
-                <td colSpan={calculateColSpan()} className="px-4 py-8 text-center">
+                <td
+                  colSpan={calculateColSpan()}
+                  className="px-4 py-8 text-center"
+                >
                   <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    <span className="ml-2 text-gray-600">Loading...</span>
+                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-yellow-300 border-t-transparent"></div>
+                    <span className="ml-2 text-white/70">Loading...</span>
                   </div>
                 </td>
               </tr>
             ) : paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={calculateColSpan()} className="px-4 py-8 text-center text-gray-500">
+                <td
+                  colSpan={calculateColSpan()}
+                  className="px-4 py-8 text-center text-white/70"
+                >
                   {emptyMessage}
                 </td>
               </tr>
             ) : (
               paginatedData.map((row, index) => (
                 <React.Fragment key={row.id || index}>
-                  <tr className={`hover:bg-gray-50 ${rowClassName}`}>
+                  <tr
+                    className={`hover:bg-white/5 transition-colors ${rowClassName}`}
+                    onClick={(e) => {
+                      if (
+                        onRowClick &&
+                        !e.target.closest("button, input, select")
+                      ) {
+                        onRowClick(row);
+                      }
+                    }}
+                    role={onRowClick ? "button" : undefined}
+                    tabIndex={onRowClick ? 0 : undefined}
+                    onKeyDown={
+                      onRowClick
+                        ? (e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              onRowClick(row);
+                            }
+                          }
+                        : undefined
+                    }
+                    style={onRowClick ? { cursor: "pointer" } : undefined}
+                  >
                     {/* Selection checkbox */}
                     {selectable && (
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
                           checked={selectedIds.includes(row.id)}
-                          onChange={(e) => handleRowSelect(row.id, e.target.checked)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          onChange={(e) =>
+                            handleRowSelect(row.id, e.target.checked)
+                          }
+                          className="rounded border-white/30 bg-black/40 text-yellow-300 focus:ring-yellow-300/50 focus:ring-offset-0"
                         />
                       </td>
                     )}
@@ -264,7 +308,7 @@ const CustomDataTable = ({
                     {columns.map((column, colIndex) => (
                       <td
                         key={colIndex}
-                        className="whitespace-nowrap px-4 py-3 text-sm text-gray-900"
+                        className="whitespace-nowrap px-4 py-3 text-sm text-white"
                       >
                         {renderCell(column, row)}
                       </td>
@@ -275,8 +319,10 @@ const CustomDataTable = ({
                       <td className="px-4 py-3">
                         <select
                           value={row[statusField]}
-                          onChange={(e) => onStatusChange?.(row.id, e.target.value)}
-                          className="rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500"
+                          onChange={(e) =>
+                            onStatusChange?.(row.id, e.target.value)
+                          }
+                          className="rounded border border-white/20 bg-black/40 text-white text-sm focus:ring-yellow-300/50 focus:border-yellow-300/50"
                         >
                           {statusOptions.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -295,9 +341,9 @@ const CustomDataTable = ({
                           ref={(el) => {
                             if (el) actionButtonRefs.current[row.id] = el;
                           }}
-                          className="p-2 rounded hover:bg-gray-100 transition-colors duration-150"
+                          className="p-2 rounded text-white/80 hover:bg-white/10 hover:text-yellow-300 transition-colors duration-150"
                         >
-                          <ThreedotIcon />
+                          <MoreVert />
                         </button>
                       </td>
                     )}
@@ -317,20 +363,24 @@ const CustomDataTable = ({
               left: `${dropdownPosition.left}px`,
             }}
           >
-            <div className="bg-white rounded-md shadow-lg border border-gray-200 py-1 min-w-[180px]">
+            <div className="bg-black/95 rounded-lg shadow-xl border border-white/10 py-1 min-w-[180px] backdrop-blur-sm">
               {actions.map((action, index) => (
                 <button
                   key={action.key}
                   onClick={() => {
-                    const row = paginatedData.find((r) => r.id === activeActionRowId);
+                    const row = paginatedData.find(
+                      (r) => r.id === activeActionRowId,
+                    );
                     handleActionClick(action.key, row, onActionClick);
                     setActiveActionRowId(null);
                   }}
-                  className={`flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 ${
-                    index === 0 ? "rounded-t-md" : ""
-                  } ${index === actions.length - 1 ? "rounded-b-md" : ""}`}
+                  className={`flex items-center w-full px-4 py-2 text-sm text-white hover:bg-white/10 transition-colors duration-150 ${
+                    index === 0 ? "rounded-t-lg" : ""
+                  } ${index === actions.length - 1 ? "rounded-b-lg" : ""}`}
                 >
-                  {action.icon && <span className="mr-2 flex-shrink-0">{action.icon}</span>}
+                  {action.icon && (
+                    <span className="mr-2 flex-shrink-0">{action.icon}</span>
+                  )}
                   <span className="truncate">{action.label}</span>
                 </button>
               ))}
@@ -341,13 +391,13 @@ const CustomDataTable = ({
 
       {/* Pagination */}
       {paginated && totalRecordsCount > 0 && (
-        <div className="z-10 px-4 py-3 bg-gray-50 border-t border-gray-200 rounded-b-lg flex items-center justify-between">
-          <div className="flex items-center text-sm text-gray-700">
+        <div className="z-10 px-4 py-3 bg-white/5 border-t border-white/10 rounded-b-lg flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center text-sm text-white/80">
             <span>Show</span>
             <select
               value={internalPageSize}
               onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-              className="mx-2 rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mx-2 rounded border border-white/20 bg-black/40 text-white text-sm focus:ring-yellow-300/50 focus:border-yellow-300/50"
             >
               <option value={10}>10</option>
               <option value={25}>25</option>
@@ -361,19 +411,19 @@ const CustomDataTable = ({
             <button
               onClick={() => handlePageChange(internalCurrentPage - 1)}
               disabled={internalCurrentPage <= 1}
-              className="px-3 py-1 rounded border border-gray-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+              className="px-3 py-1.5 rounded-lg border border-white/20 bg-black/40 text-white text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
             >
               Previous
             </button>
 
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-white/80">
               Page {internalCurrentPage} of {totalPages}
             </span>
 
             <button
               onClick={() => handlePageChange(internalCurrentPage + 1)}
               disabled={internalCurrentPage >= totalPages}
-              className="px-3 py-1 rounded border border-gray-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+              className="px-3 py-1.5 rounded-lg border border-white/20 bg-black/40 text-white text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
             >
               Next
             </button>
@@ -392,7 +442,7 @@ CustomDataTable.propTypes = {
       title: PropTypes.string.isRequired,
       sortable: PropTypes.bool,
       customRender: PropTypes.func,
-    })
+    }),
   ).isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   loading: PropTypes.bool,
@@ -407,7 +457,9 @@ CustomDataTable.propTypes = {
 
   // Selection
   selectable: PropTypes.bool,
-  selectedIds: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  selectedIds: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  ),
   onSelectionChange: PropTypes.func,
 
   // Search
@@ -431,7 +483,7 @@ CustomDataTable.propTypes = {
       key: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       icon: PropTypes.node,
-    })
+    }),
   ),
   onActionClick: PropTypes.func,
 
@@ -441,7 +493,7 @@ CustomDataTable.propTypes = {
     PropTypes.shape({
       value: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
-    })
+    }),
   ),
   onStatusChange: PropTypes.func,
 
@@ -456,6 +508,7 @@ CustomDataTable.propTypes = {
   showHeader: PropTypes.bool,
   emptyMessage: PropTypes.string,
   height: PropTypes.string,
+  onRowClick: PropTypes.func,
 };
 
 export default CustomDataTable;

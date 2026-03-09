@@ -9,7 +9,6 @@ import NAVBAR_TITLE from "@/common/constants/navbar-title.constant";
 import { checkExpiryDateOfToken } from "@/common/utils/access-token.util";
 import { removeUser } from "@/common/utils/users.util";
 import Loadar from "@/common/components/loadar/loadar.component";
-import useAutoRedirection from "@/common/hooks/use-auto-redirection.hook";
 
 /**
  * Return the component if access token is verified and return to home page if its not
@@ -28,7 +27,6 @@ export default function Private({ component, title = NAVBAR_TITLE.DOCUMENTS }) {
       router.push("/");
     }
   }, []);
-  useAutoRedirection();
 
   if (logoutLoader) {
     return <Loadar />;

@@ -1,6 +1,6 @@
 "use client";
 
-import { HeroSection } from "@/components/hero/hero.section.component";
+import { HeroSection } from "@/components/hero/hero-section/hero-section.component";
 import { FeaturesSection } from "@/components/sections/features.section.component";
 import { WorkspaceSection } from "@/components/sections/workspace.section.component";
 import { StatsSection } from "@/components/sections/stats.section.component";

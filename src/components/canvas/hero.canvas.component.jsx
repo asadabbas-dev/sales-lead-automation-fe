@@ -2,16 +2,25 @@
 
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
-import { useMousePosition } from "@/hooks/useMousePosition";
+import { useMousePosition } from "@/common/hooks/use-mouse-position.hook";
 
-const Canvas = dynamic(() => import("@react-three/fiber").then((mod) => mod.Canvas), {
-  ssr: false,
-  loading: () => <CanvasFallback />,
-});
+const Canvas = dynamic(
+  () => import("@react-three/fiber").then((mod) => mod.Canvas),
+  {
+    ssr: false,
+    loading: () => <CanvasFallback />,
+  },
+);
 
-const HeroScene = dynamic(() => import("./hero.scene.component").then((mod) => ({ default: mod.HeroScene })), {
-  ssr: false,
-});
+const HeroScene = dynamic(
+  () =>
+    import("./hero.scene.component").then((mod) => ({
+      default: mod.HeroScene,
+    })),
+  {
+    ssr: false,
+  },
+);
 
 function CanvasFallback() {
   return (

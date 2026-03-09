@@ -13,6 +13,8 @@ const initialState = {
   listRuns: generalState,
   createRun: generalState,
   runDetail: generalState,
+  enrichLead: generalState,
+  runsSummary: generalState,
 };
 
 /* ================= GET RUNS ================= */
@@ -91,21 +93,44 @@ export const enrichLead = createAsyncThunk(
   },
 );
 
+/* ================= RUNS SUMMARY ================= */
+export const getRunsSummary = createAsyncThunk(
+  "runs/summary",
+  async ({ successCallBack } = {}, thunkAPI) => {
+    try {
+      const response = await runsService.getRunsSummary();
+      successCallBack && successCallBack(response);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || { message: error.message },
+      );
+    }
+  },
+);
+
+// Ensure a slice key exists (handles old persisted state missing new keys)
+const ensure = (state, key) => {
+  if (state[key] == null) state[key] = { ...generalState };
+};
+
 const runsSlice = createSlice({
   name: "runs",
   initialState,
   reducers: {
     resetRuns: (state) => {
-      state.listRuns = generalState;
-      state.createRun = generalState;
-      state.runDetail = generalState;
-      state.enrichLead = generalState;
+      state.listRuns = { ...generalState };
+      state.createRun = { ...generalState };
+      state.runDetail = { ...generalState };
+      state.enrichLead = { ...generalState };
+      state.runsSummary = { ...generalState };
     },
   },
   extraReducers: (builder) => {
     builder
       /* -------- LIST RUNS -------- */
       .addCase(getRuns.pending, (state) => {
+        ensure(state, "listRuns");
         state.listRuns.isLoading = true;
         state.listRuns.isError = false;
       })
@@ -123,6 +148,7 @@ const runsSlice = createSlice({
 
       /* -------- CREATE RUN -------- */
       .addCase(createRun.pending, (state) => {
+        ensure(state, "createRun");
         state.createRun.isLoading = true;
         state.createRun.isError = false;
       })
@@ -139,6 +165,7 @@ const runsSlice = createSlice({
       })
       /* -------- GET RUN -------- */
       .addCase(getRun.pending, (state) => {
+        ensure(state, "runDetail");
         state.runDetail.isLoading = true;
         state.runDetail.isError = false;
         state.runDetail.isSuccess = false;
@@ -154,8 +181,9 @@ const runsSlice = createSlice({
         state.runDetail.message =
           action.payload?.message || "Failed to fetch run";
       })
-      /* -------- ENLIVEN LEAD -------- */
+      /* -------- ENRICH LEAD -------- */
       .addCase(enrichLead.pending, (state) => {
+        ensure(state, "enrichLead");
         state.enrichLead.isLoading = true;
         state.enrichLead.isError = false;
         state.enrichLead.isSuccess = false;
@@ -170,6 +198,26 @@ const runsSlice = createSlice({
         state.enrichLead.isError = true;
         state.enrichLead.message =
           action.payload?.message || "Failed to enrich lead";
+      });
+
+    builder
+      /* -------- RUNS SUMMARY -------- */
+      .addCase(getRunsSummary.pending, (state) => {
+        ensure(state, "runsSummary");
+        state.runsSummary.isLoading = true;
+        state.runsSummary.isError = false;
+        state.runsSummary.isSuccess = false;
+      })
+      .addCase(getRunsSummary.fulfilled, (state, action) => {
+        state.runsSummary.isLoading = false;
+        state.runsSummary.isSuccess = true;
+        state.runsSummary.data = action.payload;
+      })
+      .addCase(getRunsSummary.rejected, (state, action) => {
+        state.runsSummary.isLoading = false;
+        state.runsSummary.isError = true;
+        state.runsSummary.message =
+          action.payload?.message || "Failed to fetch runs summary";
       });
   },
 });

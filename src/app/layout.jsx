@@ -48,7 +48,18 @@ function LayoutWrapper({ children }) {
       {loading ? (
         <FullPageLoader />
       ) : (
-        <div className={pathname === "/" ? "" : "bg-white"}>{children}</div>
+        <div
+          className={
+            pathname === "/" ||
+            pathname?.startsWith("/runs") ||
+            pathname?.startsWith("/leads") ||
+            pathname?.startsWith("/dashboard")
+              ? ""
+              : "bg-white"
+          }
+        >
+          {children}
+        </div>
       )}
     </LenisProvider>
   );
