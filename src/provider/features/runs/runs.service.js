@@ -15,11 +15,6 @@ const getRun = async (id) => {
   return response.data;
 };
 
-const enrichLead = async (payload) => {
-  const response = await api().post("/enrich-lead", payload);
-  return response.data;
-};
-
 const getRunsSummary = async () => {
   const response = await api().get("/metrics/runs-summary");
   return response.data;
@@ -29,7 +24,6 @@ const runsService = {
   getRuns,
   createRun,
   getRun,
-  enrichLead,
   getRunsSummary,
 };
 

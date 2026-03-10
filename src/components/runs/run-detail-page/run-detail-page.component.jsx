@@ -1,7 +1,6 @@
 "use client";
 
 import CustomButton from "@/common/components/custom-button/custom-button.component";
-import { CollapsibleSection } from "@/components/dashboard/collapsible-section/collapsible-section.component";
 import { PageHeader } from "@/components/dashboard/page-header/page-header.component";
 import { Skeleton } from "@/components/dashboard/skeleton/skeleton.component";
 import { StatusBadge } from "@/components/dashboard/status-badge/status-badge.component";
@@ -167,20 +166,6 @@ export default function RunDetailPage() {
             {run.error}
           </p>
         </div>
-      )}
-
-      <CollapsibleSection title="Raw Payload" defaultOpen={false}>
-        <pre className="overflow-x-auto rounded-lg border border-white/10 bg-black/50 p-4 text-xs text-slate-300 font-mono">
-          {JSON.stringify(run.payload_json, null, 2)}
-        </pre>
-      </CollapsibleSection>
-
-      {run.result_json && (
-        <CollapsibleSection title="Full AI Result" defaultOpen={false}>
-          <pre className="overflow-x-auto rounded-lg border border-white/10 bg-black/50 p-4 text-xs text-slate-300 font-mono">
-            {JSON.stringify(run.result_json, null, 2)}
-          </pre>
-        </CollapsibleSection>
       )}
     </div>
   );

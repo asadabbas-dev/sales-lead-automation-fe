@@ -2,31 +2,17 @@
 
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, Copy, Download, X } from "lucide-react";
+import { X } from "lucide-react";
 import CustomButton from "@/common/components/custom-button/custom-button.component";
 import StatsBadge from "@/common/components/stats-badge/stats-badge.component";
 import { StatusBadge } from "../status-badge/status-badge.component";
 import { useRunDetailPanel } from "./use-run-detail-panel.hook";
 
-function runRef(id) {
-  return id ? `#${String(id).slice(0, 6)}` : "";
-}
-
 const PANEL_TOP_OFFSET = "1rem"; /* match navbar h-16 */
 
 export function RunDetailPanel({ runId, isOpen, onClose }) {
-  const {
-    activeTab,
-    copied,
-    runDetail,
-    isLoading,
-    isError,
-    message,
-    getTabData,
-    handleTabChange,
-    handleCopyTabData,
-    handleCopyFullData,
-  } = useRunDetailPanel({ runId, isOpen });
+  const { runDetail, isLoading, isError, message } =
+    useRunDetailPanel({ runId, isOpen });
 
   if (!isOpen) return null;
 
@@ -213,65 +199,6 @@ export function RunDetailPanel({ runId, isOpen, onClose }) {
                         </p>
                       </div>
                     )}
-
-                    {/* Payload tabs */}
-                    <div className="rounded-lg border border-white/10 bg-black/40 backdrop-blur-sm">
-                      <div className="border-b border-white/10 p-3">
-                        <div className="flex items-center gap-2">
-                          {["raw", "parsed", "ai", "metadata"].map((tab) => (
-                            <button
-                              key={tab}
-                              type="button"
-                              onClick={() => handleTabChange(tab)}
-                              className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                                activeTab === tab
-                                  ? "bg-yellow-300/20 text-yellow-300"
-                                  : "text-white/60 hover:text-white"
-                              }`}
-                            >
-                              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs font-medium text-white/70">
-                            {activeTab === "raw" && "Raw Input Payload"}
-                            {activeTab === "parsed" && "Extracted Lead Fields"}
-                            {activeTab === "ai" && "Full AI Output"}
-                            {activeTab === "metadata" && "Run Metadata"}
-                          </p>
-                          <CustomButton
-                            text={copied ? "Copied" : "Copy"}
-                            variant="ghost"
-                            size="sm"
-                            startIcon={
-                              copied ? (
-                                <CheckCircle2 className="h-3 w-3 text-yellow-300" />
-                              ) : (
-                                <Copy className="h-3 w-3 text-white/70" />
-                              )
-                            }
-                            onClick={handleCopyTabData}
-                          />
-                        </div>
-                        <pre className="overflow-x-auto rounded-lg bg-black/60 p-4 text-xs text-white/80 max-h-80">
-                          {JSON.stringify(getTabData(), null, 2)}
-                        </pre>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex gap-2">
-                      <CustomButton
-                        text="Export JSON"
-                        variant="outline"
-                        size="sm"
-                        startIcon={<Download className="h-4 w-4" />}
-                        onClick={handleCopyFullData}
-                      />
-                    </div>
                   </div>
                 ) : (
                   <div className="py-12 text-center text-white/60">
