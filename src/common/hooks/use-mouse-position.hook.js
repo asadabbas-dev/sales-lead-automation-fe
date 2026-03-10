@@ -7,7 +7,7 @@ export function useMousePosition() {
   const [normalized, setNormalized] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    function handleMove(e: MouseEvent) {
+    function handleMove(e) {
       setPosition({ x: e.clientX, y: e.clientY });
       setNormalized({
         x: (e.clientX / window.innerWidth - 0.5) * 2,
