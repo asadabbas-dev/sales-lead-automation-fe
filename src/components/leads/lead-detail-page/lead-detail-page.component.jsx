@@ -8,7 +8,16 @@ import { RunDetailPanel } from "@/components/dashboard/run-detail-panel/run-deta
 import { RunsDataGrid } from "@/components/dashboard/runs-data-grid/runs-data-grid.component";
 import { StatCard } from "@/components/dashboard/stats-overview-bar/components/stat-card/stat-card.component";
 import { StatusBadge } from "@/components/dashboard/status-badge/status-badge.component";
-import { Activity, Brain, Calendar, Link2, List, User } from "lucide-react";
+import {
+  Activity,
+  Brain,
+  Calendar,
+  FileText,
+  Link2,
+  List,
+  Target,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import useLeadDetailPage from "./use-lead-detail-page.hook";
 
@@ -28,6 +37,11 @@ export default function LeadDetailPage() {
     handleRowClick,
     handleClosePanel,
     handleSaveNextAction,
+    handleGenerateBrief,
+    leadBrief,
+    briefLoading,
+    briefError,
+    briefMessage,
     goToRuns,
     runsList,
     runsLoading,
@@ -115,6 +129,17 @@ export default function LeadDetailPage() {
             label="Source"
             value={lead.latest_source || "—"}
           />
+          {lead.icp_score != null && (
+            <StatCard
+              icon={Target}
+              label="ICP Score"
+              value={
+                <span className="text-lg font-bold text-cyan-300">
+                  {lead.icp_score}
+                </span>
+              }
+            />
+          )}
         </div>
       </section>
 
@@ -134,6 +159,57 @@ export default function LeadDetailPage() {
             placeholder="Select status"
           />
         </div>
+      </section>
+
+      <section className="rounded-lg border border-white/10 bg-black/40 p-4">
+        <h2 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white/70">
+          <FileText className="h-3.5 w-3.5 text-yellow-300" />
+          Meeting prep
+        </h2>
+        <CustomButton
+          text={briefLoading ? "Generating…" : "Generate brief"}
+          variant="secondary"
+          size="sm"
+          loading={briefLoading}
+          onClick={handleGenerateBrief}
+        />
+        {briefError && (
+          <p className="mt-2 text-sm text-red-300">{briefMessage}</p>
+        )}
+        {leadBrief && (
+          <div className="mt-4 space-y-4 rounded-lg border border-yellow-300/20 bg-yellow-300/5 p-4">
+            <div>
+              <p className="text-xs font-semibold uppercase text-yellow-300/80">
+                Summary
+              </p>
+              <p className="mt-1 text-sm text-white/90">{leadBrief.summary}</p>
+            </div>
+            {leadBrief.talking_points?.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase text-yellow-300/80">
+                  Talking points
+                </p>
+                <ul className="mt-1 list-inside list-disc space-y-1 text-sm text-white/90">
+                  {leadBrief.talking_points.map((p, i) => (
+                    <li key={i}>{p}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {leadBrief.checklist?.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase text-yellow-300/80">
+                  Checklist
+                </p>
+                <ul className="mt-1 list-inside list-disc space-y-1 text-sm text-white/90">
+                  {leadBrief.checklist.map((c, i) => (
+                    <li key={i}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       <section className="rounded-lg border border-white/10 bg-black/40">

@@ -4,6 +4,8 @@ import storage from "redux-persist/lib/storage";
 import authReducer from "./features/auth/auth.slice";
 import runsReducer from "./features/runs/runs.slice";
 import leadsReducer from "./features/leads/leads.slice";
+import settingsReducer from "./features/settings/settings.slice";
+import opportunitiesReducer from "./features/opportunities/opportunities.slice";
 
 const persistConfig = {
   key: "root",
@@ -15,6 +17,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   runs: runsReducer,
   leads: leadsReducer,
+  settings: settingsReducer,
+  opportunities: opportunitiesReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

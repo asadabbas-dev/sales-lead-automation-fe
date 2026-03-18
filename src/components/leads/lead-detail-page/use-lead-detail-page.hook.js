@@ -2,7 +2,9 @@
 
 import { isoToLocalInput } from "@/common/utils/iso-to-local-input";
 import {
+  clearLeadBrief,
   getLead,
+  getLeadBrief,
   getLeadRuns,
   patchLead,
 } from "@/provider/features/leads/leads.slice";
@@ -28,6 +30,12 @@ export default function useLeadDetailPage() {
   const { isLoading: updateLeadLoading } = useSelector(
     (s) => s?.leads?.updateLead || {},
   );
+  const {
+    data: leadBrief,
+    isLoading: briefLoading,
+    isError: briefError,
+    message: briefMessage,
+  } = useSelector((s) => s?.leads?.leadBrief || {});
 
   const [selectedRunId, setSelectedRunId] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -36,6 +44,7 @@ export default function useLeadDetailPage() {
 
   useEffect(() => {
     if (id) {
+      dispatch(clearLeadBrief());
       dispatch(getLead({ id }));
       dispatch(getLeadRuns({ id }));
     }
@@ -66,9 +75,6 @@ export default function useLeadDetailPage() {
           successCallBack: () => dispatch(getLead({ id })),
         }),
       );
-      enqueueSnackbar(`Lead status updated to ${nextStatus}`, {
-        variant: "success",
-      });
     },
     [dispatch, id],
   );
@@ -94,10 +100,11 @@ export default function useLeadDetailPage() {
         successCallBack: () => dispatch(getLead({ id })),
       }),
     );
-    enqueueSnackbar("Next action saved", {
-      variant: "success",
-    });
   }, [dispatch, id, nextActionAt, nextActionNote]);
+
+  const handleGenerateBrief = useCallback(() => {
+    dispatch(getLeadBrief({ id }));
+  }, [dispatch, id]);
 
   const goToRuns = useCallback(() => router.push("/runs"), [router]);
 
@@ -118,6 +125,11 @@ export default function useLeadDetailPage() {
     handleRowClick,
     handleClosePanel,
     handleSaveNextAction,
+    handleGenerateBrief,
+    leadBrief,
+    briefLoading,
+    briefError,
+    briefMessage,
     goToRuns,
     runsList,
     runsLoading,

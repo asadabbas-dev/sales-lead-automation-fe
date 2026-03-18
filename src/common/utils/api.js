@@ -4,7 +4,6 @@ import axios from "axios";
 import { enqueueSnackbar } from "notistack";
 import { getAccessToken } from "./access-token.util";
 import { delay } from "./generic.util";
-import { getSessionId } from "./session";
 import { removeUser } from "./users.util";
 
 const api = (headers = null) => {
@@ -24,41 +23,14 @@ const api = (headers = null) => {
     headers: combinedHeaders,
   });
 
-  // Add request interceptor to set x-session-id ONLY for cart endpoints
-  apiInstance.interceptors.request.use((config) => {
-    if (!accessToken) {
-      // Only add x-session-id for cart endpoints
-      const isCartEndpoint = config.url && config.url.startsWith("/cart");
-      if (isCartEndpoint) {
-        const sessionId = getSessionId();
-        if (sessionId) {
-          config.headers["x-session-id"] = sessionId;
-        }
-      }
-    }
-    return config;
-  });
-
   apiInstance.interceptors.response.use(
     async (response) => {
-      const method = response.config.method;
-      const endpoint = response.config.url?.split("/").pop();
-
-      const isSuccessResponse =
-        (method === "get" && endpoint === "generate-otp") ||
-        (["post", "put", "delete"].includes(method) &&
-          !["get", "get-all"].includes(endpoint) &&
-          !["/upload/single", "/upload/multiple"].includes(
-            response.config.url,
-          ));
-
-      // if (isSuccessResponse) {
-      //   enqueueSnackbar(response.data?.message || "Success", {
-      //     variant: "success",
-      //   });
-      //   await delay(700);
-      // }
-
+      // Common API format: { success, message?, data? } — show success toast only for non-GET
+      const msg = response.data?.message;
+      const method = response.config?.method?.toLowerCase();
+      if (msg && response.data?.success !== false && method !== "get") {
+        enqueueSnackbar(msg, { variant: "success" });
+      }
       return response;
     },
     (error) => {
@@ -69,8 +41,12 @@ const api = (headers = null) => {
       }
 
       const status = error.response?.status;
-      const message =
-        error.response?.data?.message || error.message || error.toString();
+      // Prefer backend common format message (success: false, message); fallback to FastAPI detail
+      let message = error.response?.data?.message ?? error.response?.data?.detail;
+      if (Array.isArray(message)) {
+        message = message.map((m) => (typeof m === "string" ? m : m?.msg ?? String(m))).join(" ");
+      }
+      if (message == null) message = error.message ?? error.toString();
 
       // Handle unauthorized
       if (status === 401 && typeof window !== "undefined") {
@@ -101,5 +77,14 @@ const api = (headers = null) => {
 
   return apiInstance;
 };
+
+/** Unwrap common API response { success, message?, data? } to payload for callers. */
+export function unwrapData(response) {
+  const body = response?.data;
+  if (body && typeof body === "object" && "data" in body && body.success === true) {
+    return body.data;
+  }
+  return body;
+}
 
 export default api;

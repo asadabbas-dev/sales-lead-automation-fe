@@ -10,6 +10,7 @@ function getHeaderTitle(pathname) {
   if (pathname.startsWith("/dashboard")) return "Dashboard";
   if (pathname.startsWith("/leads")) return "Leads";
   if (pathname.startsWith("/runs")) return "Automation Runs";
+  if (pathname.startsWith("/settings")) return "Settings";
   return "Lead Ops";
 }
 

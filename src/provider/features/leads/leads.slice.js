@@ -15,74 +15,53 @@ const initialState = {
   leadRuns: generalState,
   updateLead: generalState,
   leadsFunnel: generalState,
+  leadBrief: generalState,
 };
 
 export const getLeads = createAsyncThunk(
   "leads/list",
   async ({ payload, successCallBack } = {}, thunkAPI) => {
-    try {
-      const response = await leadsService.getLeads(payload);
-      successCallBack?.(response);
-      return response;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: error.message },
-      );
-    }
+    const response = await leadsService.getLeads(payload);
+    successCallBack?.(response);
+    return response;
   },
 );
 
 export const getLead = createAsyncThunk("leads/get", async ({ id }, thunkAPI) => {
-  try {
-    const response = await leadsService.getLead(id);
-    return response;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      error.response?.data || { message: error.message },
-    );
-  }
+  const response = await leadsService.getLead(id);
+  return response;
 });
 
 export const getLeadRuns = createAsyncThunk(
   "leads/runs",
   async ({ id, payload } = {}, thunkAPI) => {
-    try {
-      const response = await leadsService.getLeadRuns(id, payload);
-      return response;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: error.message },
-      );
-    }
+    const response = await leadsService.getLeadRuns(id, payload);
+    return response;
   },
 );
 
 export const patchLead = createAsyncThunk(
   "leads/update",
-  async ({ id, payload, successCallBack, errorCallBack } = {}, thunkAPI) => {
-    try {
-      const response = await leadsService.updateLead(id, payload);
-      successCallBack?.(response);
-      return response;
-    } catch (error) {
-      const errPayload = error.response?.data || { message: error.message };
-      errorCallBack?.(errPayload);
-      return thunkAPI.rejectWithValue(errPayload);
-    }
+  async ({ id, payload, successCallBack } = {}, thunkAPI) => {
+    const response = await leadsService.updateLead(id, payload);
+    successCallBack?.(response);
+    return response;
   },
 );
 
 export const getLeadsFunnel = createAsyncThunk(
   "leads/funnel",
   async (_, thunkAPI) => {
-    try {
-      const response = await leadsService.getLeadsFunnel();
-      return response;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: error.message },
-      );
-    }
+    const response = await leadsService.getLeadsFunnel();
+    return response;
+  },
+);
+
+export const getLeadBrief = createAsyncThunk(
+  "leads/brief",
+  async ({ id }, thunkAPI) => {
+    const response = await leadsService.getLeadBrief(id);
+    return response;
   },
 );
 
@@ -96,6 +75,10 @@ const leadsSlice = createSlice({
       state.leadRuns = generalState;
       state.updateLead = generalState;
       state.leadsFunnel = generalState;
+      state.leadBrief = generalState;
+    },
+    clearLeadBrief: (state) => {
+      state.leadBrief = { ...generalState };
     },
   },
   extraReducers: (builder) => {
@@ -113,7 +96,7 @@ const leadsSlice = createSlice({
         state.listLeads.isLoading = false;
         state.listLeads.isError = true;
         state.listLeads.message =
-          action.payload?.message || "Failed to fetch leads";
+          action.payload?.message || action.error?.message || "Failed to fetch leads";
       })
       .addCase(getLead.pending, (state) => {
         state.leadDetail.isLoading = true;
@@ -128,7 +111,7 @@ const leadsSlice = createSlice({
         state.leadDetail.isLoading = false;
         state.leadDetail.isError = true;
         state.leadDetail.message =
-          action.payload?.message || "Failed to fetch lead";
+          action.payload?.message || action.error?.message || "Failed to fetch lead";
       })
       .addCase(getLeadRuns.pending, (state) => {
         state.leadRuns.isLoading = true;
@@ -143,7 +126,7 @@ const leadsSlice = createSlice({
         state.leadRuns.isLoading = false;
         state.leadRuns.isError = true;
         state.leadRuns.message =
-          action.payload?.message || "Failed to fetch lead runs";
+          action.payload?.message || action.error?.message || "Failed to fetch lead runs";
       })
       .addCase(patchLead.pending, (state) => {
         state.updateLead.isLoading = true;
@@ -158,7 +141,7 @@ const leadsSlice = createSlice({
         state.updateLead.isLoading = false;
         state.updateLead.isError = true;
         state.updateLead.message =
-          action.payload?.message || "Failed to update lead";
+          action.payload?.message || action.error?.message || "Failed to update lead";
       })
       .addCase(getLeadsFunnel.pending, (state) => {
         state.leadsFunnel.isLoading = true;
@@ -173,11 +156,26 @@ const leadsSlice = createSlice({
         state.leadsFunnel.isLoading = false;
         state.leadsFunnel.isError = true;
         state.leadsFunnel.message =
-          action.payload?.message || "Failed to fetch leads funnel";
+          action.payload?.message || action.error?.message || "Failed to fetch leads funnel";
+      })
+      .addCase(getLeadBrief.pending, (state) => {
+        state.leadBrief.isLoading = true;
+        state.leadBrief.isError = false;
+      })
+      .addCase(getLeadBrief.fulfilled, (state, action) => {
+        state.leadBrief.isLoading = false;
+        state.leadBrief.isSuccess = true;
+        state.leadBrief.data = action.payload;
+      })
+      .addCase(getLeadBrief.rejected, (state, action) => {
+        state.leadBrief.isLoading = false;
+        state.leadBrief.isError = true;
+        state.leadBrief.message =
+          action.payload?.message || action.error?.message || "Failed to generate brief";
       });
   },
 });
 
-export const { resetLeads } = leadsSlice.actions;
+export const { resetLeads, clearLeadBrief } = leadsSlice.actions;
 export default leadsSlice.reducer;
 

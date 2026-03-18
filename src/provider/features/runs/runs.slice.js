@@ -14,24 +14,17 @@ const initialState = {
   createRun: generalState,
   runDetail: generalState,
   runsSummary: generalState,
+  automationHealth: generalState,
+  highValueOverview: generalState,
 };
 
 /* ================= GET RUNS ================= */
 export const getRuns = createAsyncThunk(
   "runs/list",
   async ({ payload, successCallBack }, thunkAPI) => {
-    try {
-      const response = await runsService.getRuns(payload);
-
-      if (response?.runs) {
-        successCallBack && successCallBack(response);
-        return response;
-      }
-
-      return thunkAPI.rejectWithValue(response);
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ payload: error });
-    }
+    const response = await runsService.getRuns(payload);
+    if (response?.runs) successCallBack?.(response);
+    return response;
   },
 );
 
@@ -39,18 +32,9 @@ export const getRuns = createAsyncThunk(
 export const createRun = createAsyncThunk(
   "runs/create",
   async ({ payload, successCallBack }, thunkAPI) => {
-    try {
-      const response = await runsService.createRun(payload);
-
-      if (response?.id || response?.success || response?.Succeeded) {
-        successCallBack && successCallBack(response);
-        return response;
-      }
-
-      return thunkAPI.rejectWithValue(response);
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ payload: error });
-    }
+    const response = await runsService.createRun(payload);
+    successCallBack?.(response);
+    return response;
   },
 );
 
@@ -58,14 +42,8 @@ export const createRun = createAsyncThunk(
 export const getRun = createAsyncThunk(
   "runs/getRun",
   async ({ id }, thunkAPI) => {
-    try {
-      const response = await runsService.getRun(id);
-      return response;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: error.message },
-      );
-    }
+    const response = await runsService.getRun(id);
+    return response;
   },
 );
 
@@ -73,15 +51,27 @@ export const getRun = createAsyncThunk(
 export const getRunsSummary = createAsyncThunk(
   "runs/summary",
   async ({ successCallBack } = {}, thunkAPI) => {
-    try {
-      const response = await runsService.getRunsSummary();
-      successCallBack && successCallBack(response);
-      return response;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: error.message },
-      );
-    }
+    const response = await runsService.getRunsSummary();
+    successCallBack?.(response);
+    return response;
+  },
+);
+
+/* ================= AUTOMATION HEALTH ================= */
+export const getAutomationHealth = createAsyncThunk(
+  "runs/automationHealth",
+  async (_, thunkAPI) => {
+    const response = await runsService.getAutomationHealth();
+    return response;
+  },
+);
+
+/* ================= HIGH VALUE OVERVIEW ================= */
+export const getHighValueOverview = createAsyncThunk(
+  "runs/highValueOverview",
+  async (_, thunkAPI) => {
+    const response = await runsService.getHighValueOverview();
+    return response;
   },
 );
 
@@ -99,6 +89,8 @@ const runsSlice = createSlice({
       state.createRun = { ...generalState };
       state.runDetail = { ...generalState };
       state.runsSummary = { ...generalState };
+      state.automationHealth = { ...generalState };
+      state.highValueOverview = { ...generalState };
     },
   },
   extraReducers: (builder) => {
@@ -118,7 +110,7 @@ const runsSlice = createSlice({
         state.listRuns.isLoading = false;
         state.listRuns.isError = true;
         state.listRuns.message =
-          action.payload?.message || "Failed to fetch runs";
+          action.payload?.message || action.error?.message || "Failed to fetch runs";
       })
 
       /* -------- CREATE RUN -------- */
@@ -136,7 +128,7 @@ const runsSlice = createSlice({
         state.createRun.isLoading = false;
         state.createRun.isError = true;
         state.createRun.message =
-          action.payload?.message || "Create run failed";
+          action.payload?.message || action.error?.message || "Create run failed";
       })
       /* -------- GET RUN -------- */
       .addCase(getRun.pending, (state) => {
@@ -154,7 +146,7 @@ const runsSlice = createSlice({
         state.runDetail.isLoading = false;
         state.runDetail.isError = true;
         state.runDetail.message =
-          action.payload?.message || "Failed to fetch run";
+          action.payload?.message || action.error?.message || "Failed to fetch run";
       })
       /* -------- RUNS SUMMARY -------- */
       .addCase(getRunsSummary.pending, (state) => {
@@ -172,7 +164,41 @@ const runsSlice = createSlice({
         state.runsSummary.isLoading = false;
         state.runsSummary.isError = true;
         state.runsSummary.message =
-          action.payload?.message || "Failed to fetch runs summary";
+          action.payload?.message || action.error?.message || "Failed to fetch runs summary";
+      })
+      /* -------- AUTOMATION HEALTH -------- */
+      .addCase(getAutomationHealth.pending, (state) => {
+        ensure(state, "automationHealth");
+        state.automationHealth.isLoading = true;
+        state.automationHealth.isError = false;
+      })
+      .addCase(getAutomationHealth.fulfilled, (state, action) => {
+        state.automationHealth.isLoading = false;
+        state.automationHealth.isSuccess = true;
+        state.automationHealth.data = action.payload;
+      })
+      .addCase(getAutomationHealth.rejected, (state, action) => {
+        state.automationHealth.isLoading = false;
+        state.automationHealth.isError = true;
+        state.automationHealth.message =
+          action.payload?.message || action.error?.message || "Failed to fetch automation health";
+      })
+      /* -------- HIGH VALUE OVERVIEW -------- */
+      .addCase(getHighValueOverview.pending, (state) => {
+        ensure(state, "highValueOverview");
+        state.highValueOverview.isLoading = true;
+        state.highValueOverview.isError = false;
+      })
+      .addCase(getHighValueOverview.fulfilled, (state, action) => {
+        state.highValueOverview.isLoading = false;
+        state.highValueOverview.isSuccess = true;
+        state.highValueOverview.data = action.payload;
+      })
+      .addCase(getHighValueOverview.rejected, (state, action) => {
+        state.highValueOverview.isLoading = false;
+        state.highValueOverview.isError = true;
+        state.highValueOverview.message =
+          action.payload?.message || action.error?.message || "Failed to fetch high value overview";
       });
   },
 });

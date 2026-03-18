@@ -1,11 +1,14 @@
 "use client";
 
 import { createRun } from "@/provider/features/runs/runs.slice";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import * as Yup from "yup";
 
-const INITIAL_FORM = {
+const defaultValues = {
   workflow: "",
   source: "manual",
   priority: "",
@@ -18,66 +21,94 @@ const INITIAL_FORM = {
   industry: "",
 };
 
+const validationSchema = Yup.object()
+  .shape({
+    workflow: Yup.string()
+      .trim()
+      .required("Workflow is required"),
+    source: Yup.string().required("Source is required"),
+    priority: Yup.string().optional(),
+    name: Yup.string().optional(),
+    email: Yup.string()
+      .trim()
+      .email("Invalid email address")
+      .optional(),
+    phone: Yup.string().trim().optional(),
+    budget: Yup.string().optional(),
+    intent: Yup.string().optional(),
+    urgency: Yup.string().optional(),
+    industry: Yup.string().optional(),
+  })
+  .test(
+    "contact-required",
+    "Email or phone is required",
+    (values) =>
+      !!(
+        (values.email && values.email.trim()) ||
+        (values.phone && values.phone.trim())
+      ),
+  );
+
 export default function useCreateRun() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isLoading } = useSelector((state) => state?.runs?.createRun || {});
+  const { isLoading } = useSelector(
+    (state) => state?.runs?.createRun ?? {},
+  );
+  const [submittedResult, setSubmittedResult] = useState(null);
 
-  const [form, setForm] = useState(INITIAL_FORM);
-  const [result, setResult] = useState(null);
-  const [aiErr, setAiErr] = useState(null);
+  const {
+    register,
+    handleSubmit: formHandleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues,
+    resolver: yupResolver(validationSchema),
+    mode: "onChange",
+  });
 
-  const set = useCallback((name) => {
-    return (e) => {
-      const value = typeof e === "string" ? e : e.target.value;
-      setForm((prev) => ({ ...prev, [name]: value }));
-      setResult(null);
-      setAiErr(null);
-    };
-  }, []);
+  const onSubmit = useCallback(
+    (values) => {
+      const payload_json = {};
+      if (values.name?.trim()) payload_json.name = values.name.trim();
+      if (values.email?.trim()) payload_json.email = values.email.trim();
+      if (values.phone?.trim()) payload_json.phone = values.phone.trim();
+      if (values.budget?.trim())
+        payload_json.budget = Number(values.budget);
+      if (values.intent?.trim()) payload_json.intent = values.intent.trim();
+      if (values.urgency?.trim()) payload_json.urgency = values.urgency.trim();
+      if (values.industry?.trim())
+        payload_json.industry = values.industry.trim();
 
-  const handleSubmit = useCallback(() => {
-    if (!form.workflow.trim()) return;
-    if (!form.email.trim() && !form.phone.trim()) return;
-
-    const payload_json = {};
-    if (form.name.trim()) payload_json.name = form.name.trim();
-    if (form.email.trim()) payload_json.email = form.email.trim();
-    if (form.phone.trim()) payload_json.phone = form.phone.trim();
-    if (form.budget.trim()) payload_json.budget = Number(form.budget);
-    if (form.intent.trim()) payload_json.intent = form.intent.trim();
-    if (form.urgency) payload_json.urgency = form.urgency;
-    if (form.industry.trim()) payload_json.industry = form.industry.trim();
-
-    dispatch(
-      createRun({
-        payload: {
-          workflow: form.workflow.trim(),
-          source: form.source,
-          priority: form.priority || null,
-          payload_json,
-        },
-        successCallBack: (res) => {
-          setResult(res);
-          setAiErr(
-            res.status === "success" ? null : res.error || "AI enrichment failed.",
-          );
-        },
-        errorCallBack: (err) => {
-          const msg = err?.detail || err?.message || "Failed to create run.";
-          setAiErr(msg);
-        },
-      }),
-    );
-  }, [dispatch, form]);
+      dispatch(
+        createRun({
+          payload: {
+            workflow: values.workflow.trim(),
+            source: values.source,
+            priority: values.priority?.trim() || null,
+            payload_json,
+          },
+          successCallBack: (res) => setSubmittedResult(res),
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   const handleReset = useCallback(() => {
-    setForm(INITIAL_FORM);
-    setResult(null);
-    setAiErr(null);
-  }, []);
+    setSubmittedResult(null);
+    reset(defaultValues);
+  }, [reset]);
 
   const goToRuns = useCallback(() => router.push("/runs"), [router]);
+
+  const setSelect = useCallback(
+    (name) => (value) => setValue(name, value ?? "", { shouldValidate: true }),
+    [setValue],
+  );
 
   const sourceOptions = useMemo(
     () => [
@@ -120,13 +151,20 @@ export default function useCreateRun() {
     [],
   );
 
+  const result = submittedResult;
+  const aiErr =
+    result?.status === "failed" ? result?.error || "AI enrichment failed." : null;
+
   return {
-    form,
+    register,
+    handleSubmit: formHandleSubmit(onSubmit),
+    errors,
+    setValue,
+    watch,
+    setSelect,
     result,
     aiErr,
     isLoading,
-    set,
-    handleSubmit,
     handleReset,
     goToRuns,
     sourceOptions,

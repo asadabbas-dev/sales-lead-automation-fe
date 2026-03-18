@@ -132,6 +132,16 @@ export default function useLeads() {
         ),
       },
       {
+        key: "icp_score",
+        title: "ICP Score",
+        sortable: true,
+        customRender: (row) => (
+          <span className="text-sm font-medium text-cyan-300">
+            {row.icp_score != null ? row.icp_score : "—"}
+          </span>
+        ),
+      },
+      {
         key: "latest_source",
         title: "Source",
         sortable: true,

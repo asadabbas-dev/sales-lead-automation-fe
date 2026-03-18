@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useState, useMemo, useCallback } from "react";
-import { Home, Database, Users } from "lucide-react";
+import { Home, Database, Settings, Users, Briefcase } from "lucide-react";
 import { useSidebar } from "../sidebar-context/sidebar-context.component";
 
 export function useDashboardSidebar() {
@@ -26,6 +26,16 @@ export function useDashboardSidebar() {
         href: "/runs",
         label: "Automation Runs",
         icon: Database,
+      },
+      {
+        href: "/opportunities",
+        label: "Opportunities",
+        icon: Briefcase,
+      },
+      {
+        href: "/settings",
+        label: "Settings",
+        icon: Settings,
       },
     ],
     []
